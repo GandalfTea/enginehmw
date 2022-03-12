@@ -1,82 +1,84 @@
 
 
 #include <vector>
+#include <cstdint>
+#include <stdio.h>
+#include <Map>
+#include <Any>
 
 #ifndef MATRIX
 #define MATRIX
+
+// Matrix type macros
+#define MAT_8U  0 
+#define MAT_16U 1
+#define MAT_32U 2
+#define MAT_8I  3
+#define MAT_16I 4
+#define MAT_32I 5
+#define MAT_32F 6
+#define MAT_64D 7
 
 namespace MEGA 
 {
 
 typedef int Scalar;
 
-// maybe use typedef ? 
-template <uint8_t MAT_8UC1>
-template <uint16_t MAT_16UC1>
-template <uint32_t MAT_32UC1>
-template <int8_t MAT_8IC1>
-template <int16_t MAT_16IC1>
-template <int32_t MAT_32IC1>
-template <float MAT_32FC1>
-template <double MAT_64DC1>
+//this is bullshit. ignore
+struct matrix_type_return {
+	std::vector<std::vector<std::any>> matrix;
+	std::vector<std::any> row;
+};
 
-typedef enum {
-	MAT_8UC1,
-	MAT_16UC1,
-	MAT_32UC1,
-	MAT_8IC1,
-	MAT_16IC1,
-	MAT_32IC1,
-	MAT_32FC1,
-	MAT_64DC1,
+typedef enum MatrixType {
+	NORMAL,
 	IDENTITY
-} DataType;
+} MatrixType;
 
 
 class Matrix {
 	public:
 		Matrix();
 		Matrix( Matrix& a );
-		Matrix( DataType type = MAT_8UC1, size_t rows, size_t cols, std::vector& vals );
-		Matrix( DataType type = MAT_8UC1, size_t rows, size_t cols, int fill = 0 );
-		Matrix( DataType type = IDENTITY, size_t size );
+		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::vector<std::any>& vals );
+		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, int fill = 0 );
+		Matrix( int type = IDENTITY, size_t size = 2 );
 		~Matrix();
 
-		std::vector<std::vector<DataType>> data;
+		std::vector<std::vector<std::any>> data;
 		int cols;
 		int rows;
 		uint32_t step = 0x00;
-		mutable DataType type;
+		mutable int type;
 
 		// Helpers
 		static Scalar det( Matrix& src );
 		static Matrix inverse( Matrix& src );
 		operator std::string() const;
-
+	
 		// Arithmatic
 		Matrix& operator=( Matrix& src );
-		Matrix& operator+( Matrix& lhs, Matrix& rhs );
-		Matrix& operator-( Matrix& lhs, Matrix& rhs );
+		Matrix& operator+( Matrix& rhs );
+		Matrix& operator-( Matrix& rhs );
 
-		Matrix& operator*( Matrix& lhs, Matrix& rhs );
-		Matrix& operator*( Scalar& lhs, Matrix& rhs );
-		Matrix& operator*( Matrix& lhs, Scalar& rhs );
-		Matrix& operator*( Vector4& lhs, Matrix& rhs );
-		Matrix& operator*( Matrix& lhs, Vector4& rhs );
+		Matrix& operator*( Matrix& rhs );
+		Matrix& operator*( Scalar& rhs );
+		Matrix& operator*( Vector4& rhs );
 
-		Matrix& operator/( Matrix& lhs, Matrix& rhs );
-		Matrix& operator/( Scalar& lhs, Matrix& rhs );
-		Matrix& operator/( Matrix& lhs, Scalar& rhs );
-		Matrix& operator/( Vector4& lhs, Matrix& rhs );
-		Matrix& operator/( Matrix& lhs, Vector4& rhs );
+		Matrix& operator/( Matrix& rhs );
+		Matrix& operator/( Scalar& rhs );
+		Matrix& operator/( Vector4& rhs );
 
-		Matrix& operator==( Matrix& lhs, Matrix& rhs );
-		Matrix& operator!=( Matrix& lhs, Matrix& rhs );
+		Matrix& operator==( Matrix& rhs );
+		Matrix& operator!=( Matrix& rhs );
 
 	private:
-		void set_step(DataType& type);
+		void set_step(int& type);
 		Matrix& compare_types( Matrix& lhs, Matrix& rhs );
+		matrix_type_return get_type(int type);
 };
+
+
 
 
 }

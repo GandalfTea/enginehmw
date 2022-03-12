@@ -8,7 +8,7 @@ namespace MEGA
 
 // Basic creates a 0 filed 4x4 matrix
 Matrix::Matrix() 
-	: rows(4), cols(4), step(0x8), type(MAT_8UC1)
+	: rows(4), cols(4), step(0x8), type(MAT_8U)
 {
 	std::vector<std::vector<uint8_t>> matrix;
 	for(size_t i{}; i<4; i++) {
@@ -26,7 +26,55 @@ Matrix::Matrix( Matrix& a )
 	: data(a.data), cols(a.cols), rows(a.rows), step(a.step), type(a.type) {}
 
 
-Matrix::Matrix( DataType type = MAT_8UC1, size_t rows, size_t cols, std::vector& vals ) 
+	// this is very very bad. an avengers level threat
+matrix_type_return Matrix::get_type(int type) {
+	switch(type) {
+		case 0:
+			matrix_type_return a;
+			a.matrix = std::vector<std::vector<uint8_t>> matrix;
+			a.row = std::vector<uint8_t> row;
+			return a;
+		case 1:
+			matrix_type_return a;
+			a.matrix = std::vector<std::vector<uint16_t>> matrix;
+			a.row = std::vector<uint16_t> row;
+			return a;
+		case 2:
+			matrix_type_return a;
+			a.matrix = std::vector<std::vector<uint32_t>> matrix;
+			a.row = std::vector<uint32_t> row;
+			return a;
+		case 3:
+			matrix_type_return a;
+			a.matrix = std::vector<std::vector<int8_t>> matrix;
+			a.row = std::vector<int8_t> row;
+			return a;
+		case 4:
+			matrix_type_return a;
+			a.matrix = std::vector<std::vector<int16_t>> matrix;
+			a.row = std::vector<int16_t> row;
+			return a;
+		case 5:
+			matrix_type_return a;
+			a.matrix = std::vector<std::vector<int32_t>> matrix;
+			a.row = std::vector<int32_t> row;
+			return a;
+		case 6:
+			matrix_type_return a;
+			a.matrix = std::vector<std::vector<float>> matrix;
+			a.row = std::vector<float> row;
+			return a;
+		case 7:
+			matrix_type_return a;
+			a.matrix = std::vector<std::vector<double>> matrix;
+			a.row = std::vector<double> row;
+			return a;
+	}
+}
+
+
+
+Matrix::Matrix( int type = MAT_8UC1, size_t rows, size_t cols, std::vector& vals ) 
 	: rows(rows), cols(cols), type(type)
 {
 	std::vector<std::vector<type>> matrix;
@@ -45,15 +93,14 @@ Matrix::Matrix( DataType type = MAT_8UC1, size_t rows, size_t cols, std::vector&
 Matrix::Matrix( DataType type = MAT_8UC1, size_t rows, size_t cols, int fill = 0 ) 
 	: rows(rows), cols(cols), type(type)
 {
-	std::vector<std::vector<type>> matrix;
+	matrix_type_return a = get_type(type);
 	for(size_t i{}; i < cols; i++) {
-		std::vector<type> row;
 		for(size_t f{}; f < rows; f++) {
-			row.push_back(fill);
+			a.row.push_back(fill);
 		}
-		matrix.push_back(row);
+		a.matrix.push_back(row);
 	}
-	this->data = matrix;
+	this->data = a.matrix;
 	set_step(type);
 }
 
