@@ -9,13 +9,17 @@ namespace MEGA
 {
 
 // Primitive encalulation
+// keep vertex under 20 bytes
 struct Vertex {
 	float x, y, z;
+	std::vector<uint8_t> color(0, 0, 0);	// 0 - 255
+	Vector4 normal(0,0,0,0);
+	uint8_t specular = 0; 								// 0 - 255
 }
 
 struct Model {
 	std::vector<Vertex> verticies{};
-	std::vector<unsigned int> ids{};
+	std::vector<unsigned int> IDs{};
 }
 
 // Object Base Class
@@ -35,13 +39,14 @@ class Object {
 
 		virtual void render();
 		void move(Matrix& Rt);
+		void setStatic( bool set) const;
 
 		bool changedSinceLastFrame = false;
+		mutable bool Static = false;
 
 	private:
-		const uint32_t world_id;
-		static uint64_t next_id;
-		const bool Static = false;
+		const uint16_t world_id;
+		static uint32_t next_id;
 };
 
 }
