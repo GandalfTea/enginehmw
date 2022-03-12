@@ -9,6 +9,10 @@
 #ifndef MATRIX
 #define MATRIX
 
+namespace MEGA 
+{
+
+
 // Matrix type macros
 #define MAT_8U  0 
 #define MAT_16U 1
@@ -19,8 +23,6 @@
 #define MAT_32F 6
 #define MAT_64D 7
 
-namespace MEGA 
-{
 
 typedef int Scalar;
 
