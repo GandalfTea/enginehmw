@@ -1,6 +1,7 @@
 
 #include "Matrix.h"
 #include <limits>       
+#include <typeinfo>
 
 namespace MEGA
 {
@@ -10,44 +11,52 @@ namespace MEGA
 matrix_type_return Matrix::get_type(int type) {
 	switch(type) {
 		case 0:
-			matrix_type_return a;
+			allocator a;
 			a.matrix = std::vector<std::vector<uint8_t>> matrix;
 			a.row = std::vector<uint8_t> row;
+			a.typeId = 'h';
 			return a;
 		case 1:
-			matrix_type_return a;
+			allocator a;
 			a.matrix = std::vector<std::vector<uint16_t>> matrix;
 			a.row = std::vector<uint16_t> row;
+			a.typeId = 't';
 			return a;
 		case 2:
-			matrix_type_return a;
+			allocator a;
 			a.matrix = std::vector<std::vector<uint32_t>> matrix;
 			a.row = std::vector<uint32_t> row;
+			a.typeId = 'j';
 			return a;
 		case 3:
-			matrix_type_return a;
+			allocator a;
 			a.matrix = std::vector<std::vector<int8_t>> matrix;
 			a.row = std::vector<int8_t> row;
+			a.typeId = 'a';
 			return a;
 		case 4:
-			matrix_type_return a;
+			allocator a;
 			a.matrix = std::vector<std::vector<int16_t>> matrix;
 			a.row = std::vector<int16_t> row;
+			a.typeId = 's';
 			return a;
 		case 5:
-			matrix_type_return a;
+			allocator a;
 			a.matrix = std::vector<std::vector<int32_t>> matrix;
 			a.row = std::vector<int32_t> row;
+			a.typeId = 'i';
 			return a;
 		case 6:
-			matrix_type_return a;
+			allocator a;
 			a.matrix = std::vector<std::vector<float>> matrix;
 			a.row = std::vector<float> row;
+			a.typeId = 'f';
 			return a;
 		case 7:
-			matrix_type_return a;
+			allocator a;
 			a.matrix = std::vector<std::vector<double>> matrix;
 			a.row = std::vector<double> row;
+			a.typeId = 'd';
 			return a;
 	}
 }
@@ -76,26 +85,29 @@ Matrix::Matrix( Matrix& a )
 	: data(a.data), cols(a.cols), rows(a.rows), step(a.step), type(a.type) {}
 
 
-Matrix::Matrix( int type = MAT_8UC1, size_t rows, size_t cols, std::vector& vals ) 
+Matrix::Matrix( int type = MAT_8U, size_t rows, size_t cols, std::vector& vals ) 
 	: rows(rows), cols(cols), type(type)
 {
-	std::vector<std::vector<type>> matrix;
+	if( rows*cols < vals.size()) throw MatrixException(INPUT_TOO_MANY_VALUES);
+	if( rows*cols > vals.size()) throw MatrixException(INPUT_NOT_ENOUGH_VALUES);
+	allocator a = get_type(type);
 	for(size_t i{}; i < cols; i++) {
-		std::vector<type> row;
 		for(size_t f{}; f < rows; f++) {
-			row.push_back(vals[f + i]);
+			if( typeid(vals[i + f]) != a.typeId) throw MatrixException(INPUT_VALUES_WRONG_TYPE);
+			a.row.push_back(vals[i + f]);
 		}
-		matrix.push_back(row);
+		a.matrix.push_back(row);
 	}
-	this->data = matrix;
+	this->data = a.matrix;
 	set_step(type);
 }
 
 
-Matrix::Matrix( DataType type = MAT_8UC1, size_t rows, size_t cols, int fill = 0 ) 
+Matrix::Matrix( DataType type = MAT_8U, size_t rows, size_t cols, int fill = 0 ) 
 	: rows(rows), cols(cols), type(type)
 {
-	matrix_type_return a = get_type(type);
+	allocator a = get_type(type);
+	if( typeid(fill) != a.typeId) throw MatrixException(INPUT_VALUES_WRONG_TYPE);
 	for(size_t i{}; i < cols; i++) {
 		for(size_t f{}; f < rows; f++) {
 			a.row.push_back(fill);
@@ -106,29 +118,23 @@ Matrix::Matrix( DataType type = MAT_8UC1, size_t rows, size_t cols, int fill = 0
 	set_step(type);
 }
 
-Matrix::Matrix( DataType type = IDENTITY, size_t size )
+Matrix::eye(size_t size, int type = MAT_8U)
 	: rows(size), cols(size), step(0x8), type(type)
 {
-	if(type != IDENTITY) {
-		std::cerr << "Type can only be IDENTITY for this constructor." << endl;
-		return -1;
-	}
-
 	int idx = 0;
-	std::vector<std:vector<uint8_t>> matrix;
+	allocator a = get_type(type);
 
 	for(size_t i{}; i < size; i++) {
-		std::vector<uint8_t> row;	
 		for(size_t f{}; f < size; f++) {
 			if(f == idx) {
-				row.push_back(1);
+				a.row.push_back(1);
 			}
-			row.push_back(0);
+			a.row.push_back(0);
 		}
-		matrix.push_back(row);
+		a.matrix.push_back(row);
 		idx++;
 	}
-	this->data = matrix;
+	this->data = a.matrix;
 }
 
 // Helpsers
@@ -165,9 +171,9 @@ void Matrix::set_step(DataType type) {
 	}
 }
 
-static Scalar Matrix::det( Matrix& src ) {
+static Scalar Matrix::det( Matrix& src ) {}
 
-}
+static Matrix& Matrix::eye(size_t size, int type = MAT_8U) {}
 
 
 // Arithmetic

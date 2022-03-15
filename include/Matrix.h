@@ -22,10 +22,22 @@ namespace MEGA
 #define MAT_32F 6
 #define MAT_64D 7
 
-//this is bullshit. ignore
-struct matrix_type_return {
+struct allocator {
 	std::vector<std::vector<std::any>> matrix;
 	std::vector<std::any> row;
+	std::string typeId;
+};
+
+class MatrixException {
+	public:
+		typedef enum {
+			INPUT_VALUES_WRONG_TYPE,
+			INPUT_TOO_MANY_VALUES,
+			INPUT_NOT_ENOUGH_VALUES,
+
+		} Error;
+		Error error_;
+		explicit MatrixException(Error error) : error_(error) {}
 };
 
 
@@ -35,7 +47,7 @@ class Matrix {
 		Matrix( Matrix& a );
 		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::vector<std::any>& vals );
 		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, int fill = 0 );
-		Matrix( int type = IDENTITY, size_t size = 2 );
+		//Matrix( int type = IDENTITY, size_t size = 2 );
 		~Matrix();
 
 		std::vector<std::vector<std::any>> data;
@@ -71,7 +83,7 @@ class Matrix {
 	private:
 		void set_step(int& type);
 		Matrix& compare_types( Matrix& lhs, Matrix& rhs );
-		matrix_type_return get_type(int type);
+		allocator get_type(int type);
 };
 
 
