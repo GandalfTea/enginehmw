@@ -1,16 +1,19 @@
 
+#ifndef MATRIX
+#define MATRIX
+
+
 #include "Types.h"
 #include <vector>
 #include <cstdint>
 #include <stdio.h>
-#include <Map>
+#include <string>
 #include <Any>
-
-#ifndef MATRIX
-#define MATRIX
 
 namespace MEGA 
 {
+
+static std::vector<std::any> DEFAULT_VECTOR;
 
 // Matrix type
 #define MAT_8U  0 
@@ -34,7 +37,8 @@ class MatrixException {
 			INPUT_VALUES_WRONG_TYPE,
 			INPUT_TOO_MANY_VALUES,
 			INPUT_NOT_ENOUGH_VALUES,
-
+			EXTRACT_INDEX_TOO_BIG,
+			EXTRACT_NEGATIVE_INDEX
 		} Error;
 		Error error_;
 		explicit MatrixException(Error error) : error_(error) {}
@@ -45,9 +49,8 @@ class Matrix {
 	public:
 		Matrix();
 		Matrix( Matrix& a );
-		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::vector<std::any>& vals );
+		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::vector<std::any>& vals = DEFAULT_VECTOR );
 		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, int fill = 0 );
-		//Matrix( int type = IDENTITY, size_t size = 2 );
 		~Matrix();
 
 		std::vector<std::vector<std::any>> data;
@@ -57,8 +60,11 @@ class Matrix {
 		mutable uint8_t type;
 
 		// Helpers
-		static Scalar det( Matrix& src );
-		static Matrix inverse( Matrix& src );
+		Scalar at( size_t col, size_t row ) const;
+		std::vector<std::any> row( size_t row ) const;
+		std::vector<std::any> col( size_t col ) const;
+		static Scalar det( const Matrix& src );
+		static Matrix inverse( const Matrix& src );
 		operator std::string() const;
 	
 		// Arithmatic
@@ -68,11 +74,11 @@ class Matrix {
 
 		Matrix& operator*( Matrix& rhs );
 		Matrix& operator*( Scalar& rhs );
-		Matrix& operator*( Vector4& rhs );
+		//Matrix& operator*( Vector4& rhs );
 
 		Matrix& operator/( Matrix& rhs );
 		Matrix& operator/( Scalar& rhs );
-		Matrix& operator/( Vector4& rhs );
+		//Matrix& operator/( Vector4& rhs );
 
 		Matrix& operator==( Matrix& rhs );
 		Matrix& operator!=( Matrix& rhs );

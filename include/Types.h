@@ -1,4 +1,5 @@
 #include <vector>
+#include <cstdint>
 
 
 #ifndef ENGINE_GLOBAL_TYPES
@@ -13,16 +14,16 @@ typedef unsigned char uchar;
 // keep vertex under 20 bytes
 struct Vertex {
 	float x{}, y{}, z{};
-	std::vector<uint8_t> color(0, 0, 0);	// 0 - 255
-	Vector4 normal(0,0,0,0);
+	std::vector<uint8_t> color{0, 0, 0};	// 0 - 255
+	std::vector<uchar> normal{0,0,0,0};
 	uint8_t specular = 0; 								// 0 - 255
 	uint32_t ID{};
-}
+};
 
 struct Model {
 	std::vector<Vertex> verticies{};
 	std::vector<unsigned int> IDs{};
-}
+};
 
 }
 #endif

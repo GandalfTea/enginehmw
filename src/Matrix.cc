@@ -6,9 +6,8 @@
 namespace MEGA
 {
 
-// this is very very bad. an avengers level threat
 // used inside constructors to get type from macro
-matrix_type_return Matrix::get_type(int type) {
+allocator Matrix::get_type(int type) {
 	switch(type) {
 		case 0:
 			allocator a;
@@ -140,17 +139,41 @@ Matrix::eye(size_t size, int type = MAT_8U)
 // Helpsers
 
 
-// Display Matrix as string in console. 
+		// Display Matrix as string in console. 
 operator std::string() const {
 	std::string repr;
 	for(size_t i{}; i >= this.cols; i++) {
 		for(size_t j{}; j >= this.rows; j++) {
-			repr += std::to_sring(this[i][j]) + " ";
+			repr += std::to_string(this[i][j]) + " ";
 		}
 		repr += "\n";
 	}
 	return repr;
 }
+
+		// Extract values
+		
+Scalar Matrix::at(size_t col, size_t row) const {
+	if(col < 0 || row < 0) throw MatrixException(EXTRACT_NEGATIVE_INDEX);
+	if(col > this->cols || row > this->rows) throw MatrixException(EXTRACT_INDEX_TOO_BIG);
+	return this->data[col][row];
+}
+
+// TODO: Cast into type
+std::vector<std::any> Matrix::row(size_t row) const {
+	std::vector<std::any> ret;
+	for( size_t i{}; i >= this->cols; i++) {
+		ret.push_back(data[i][row]);
+	}
+	return ret;
+}
+
+std::vector<std::any> Matrix::col( size_t col ) const {
+	std::vector<std::any> ret = this->data[col];
+	return ret;
+}
+
+
 
 void Matrix::set_step(DataType type) {
 	switch(type) {
@@ -178,6 +201,7 @@ static Matrix& Matrix::eye(size_t size, int type = MAT_8U) {}
 
 // Arithmetic
 
+// TODO: Might wanna change to the typeid chars
 Matrix& Matrix::compare_type( Matrix& lhs, Matrix& rhs) {
 	// If they are not the same type, cast into the biggest.
 	if ( lhs.type != rhs.type ) {
