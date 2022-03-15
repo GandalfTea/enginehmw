@@ -1,4 +1,5 @@
 
+#include "Types.h"
 #include "Vector4.h"
 #include "Matrix.h";
 
@@ -7,20 +8,6 @@
 
 namespace MEGA 
 {
-
-// Primitive encalulation
-// keep vertex under 20 bytes
-struct Vertex {
-	float x, y, z;
-	std::vector<uint8_t> color(0, 0, 0);	// 0 - 255
-	Vector4 normal(0,0,0,0);
-	uint8_t specular = 0; 								// 0 - 255
-}
-
-struct Model {
-	std::vector<Vertex> verticies{};
-	std::vector<unsigned int> IDs{};
-}
 
 // Object Base Class
 class Object {

@@ -1,5 +1,5 @@
 
-
+#include "Types.h"
 #include <vector>
 #include <cstdint>
 #include <stdio.h>
@@ -12,8 +12,7 @@
 namespace MEGA 
 {
 
-
-// Matrix type macros
+// Matrix type
 #define MAT_8U  0 
 #define MAT_16U 1
 #define MAT_32U 2
@@ -23,19 +22,11 @@ namespace MEGA
 #define MAT_32F 6
 #define MAT_64D 7
 
-
-typedef int Scalar;
-
 //this is bullshit. ignore
 struct matrix_type_return {
 	std::vector<std::vector<std::any>> matrix;
 	std::vector<std::any> row;
 };
-
-typedef enum MatrixType {
-	NORMAL,
-	IDENTITY
-} MatrixType;
 
 
 class Matrix {
@@ -48,10 +39,10 @@ class Matrix {
 		~Matrix();
 
 		std::vector<std::vector<std::any>> data;
-		int cols;
-		int rows;
-		uint32_t step = 0x00;
-		mutable int type;
+		unsigned int cols;
+		unsigned int rows;
+		uchar step = 0x00;
+		mutable uint8_t type;
 
 		// Helpers
 		static Scalar det( Matrix& src );
@@ -73,6 +64,9 @@ class Matrix {
 
 		Matrix& operator==( Matrix& rhs );
 		Matrix& operator!=( Matrix& rhs );
+
+		// Static
+		static Matrix& eye(size_t size, int type = MAT_8U);
 
 	private:
 		void set_step(int& type);

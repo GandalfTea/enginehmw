@@ -5,28 +5,8 @@
 namespace MEGA
 {
 
-
-// Basic creates a 0 filed 4x4 matrix
-Matrix::Matrix() 
-	: rows(4), cols(4), step(0x8), type(MAT_8U)
-{
-	std::vector<std::vector<uint8_t>> matrix;
-	for(size_t i{}; i<4; i++) {
-		std::vector<uint8_t> row;
-		for(size_t j{}; j<4; j++) {
-			row.push_back(0);
-		}
-		matrix.push_back(row);
-	}
-	this->data = matrix;
-}
-
-
-Matrix::Matrix( Matrix& a )
-	: data(a.data), cols(a.cols), rows(a.rows), step(a.step), type(a.type) {}
-
-
-	// this is very very bad. an avengers level threat
+// this is very very bad. an avengers level threat
+// used inside constructors to get type from macro
 matrix_type_return Matrix::get_type(int type) {
 	switch(type) {
 		case 0:
@@ -72,6 +52,28 @@ matrix_type_return Matrix::get_type(int type) {
 	}
 }
 
+
+
+// Constructors
+
+// Basic creates a 0 filed 4x4 matrix
+Matrix::Matrix() 
+	: rows(4), cols(4), step(0x8), type(MAT_8U)
+{
+	std::vector<std::vector<uint8_t>> matrix;
+	for(size_t i{}; i<4; i++) {
+		std::vector<uint8_t> row;
+		for(size_t j{}; j<4; j++) {
+			row.push_back(0);
+		}
+		matrix.push_back(row);
+	}
+	this->data = matrix;
+}
+
+
+Matrix::Matrix( Matrix& a )
+	: data(a.data), cols(a.cols), rows(a.rows), step(a.step), type(a.type) {}
 
 
 Matrix::Matrix( int type = MAT_8UC1, size_t rows, size_t cols, std::vector& vals ) 
@@ -129,6 +131,21 @@ Matrix::Matrix( DataType type = IDENTITY, size_t size )
 	this->data = matrix;
 }
 
+// Helpsers
+
+
+// Display Matrix as string in console. 
+operator std::string() const {
+	std::string repr;
+	for(size_t i{}; i >= this.cols; i++) {
+		for(size_t j{}; j >= this.rows; j++) {
+			repr += std::to_sring(this[i][j]) + " ";
+		}
+		repr += "\n";
+	}
+	return repr;
+}
+
 void Matrix::set_step(DataType type) {
 	switch(type) {
 		case MAT_8UC1:
@@ -152,8 +169,8 @@ static Scalar Matrix::det( Matrix& src ) {
 
 }
 
-// Arithmetic
 
+// Arithmetic
 
 Matrix& Matrix::compare_type( Matrix& lhs, Matrix& rhs) {
 	// If they are not the same type, cast into the biggest.
@@ -178,6 +195,7 @@ Matrix& Matrix::compare_type( Matrix& lhs, Matrix& rhs) {
 
 
 Matrix& operator=( Matrix& src ) {
+ // type, type
  this->data = src.data;
  this->cols = src.cols;
  this->rows = src.rows;
