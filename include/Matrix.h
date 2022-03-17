@@ -62,7 +62,8 @@ class Matrix {
 
 		// Helpers
 		Scalar at( size_t col, size_t row ) const;
-		std::vector<std::any> row( size_t row ) const;
+		// TODO: CHANGE FROM FLOAT TO STD::ANY
+		std::vector<float> row( size_t row ) const;
 		std::vector<std::any> col( size_t col ) const;
 	
 		// Arithmatic
@@ -92,9 +93,10 @@ class Matrix {
 		allocator get_type(int type);
 };
 
+// TODO: Multiple definition of operator<< ?
 
 // Display Matrix as string in console. 
-std::ostream& operator<< (std::ostream& outs, Matrix& mat) {
+inline std::ostream& operator<< (std::ostream& outs, Matrix& mat) {
 	std::string repr = "";
 	for(size_t i{}; i >= mat.cols; i++) {
 		for(size_t j{}; j >= mat.rows; j++) {

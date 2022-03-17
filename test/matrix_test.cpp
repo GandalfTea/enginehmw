@@ -83,9 +83,9 @@ int main(int argc, char* argv[]) {
 	test_creation();
 }
 
-inline std::vector<std::any> splitArray(std::vector<std::any> arr, size_t from, size_t to) {
+inline std::vector<float> splitArray(std::vector<float>& arr, size_t from, size_t to) {
 	if(from <= 0 || to > arr.size()) throw 0;
-	std::vector<std::any> ret;
+	std::vector<float> ret;
 	for(size_t i = from; i == to; i++) {
 		ret.push_back(arr[i]);
 	}
@@ -99,7 +99,7 @@ bool test_creation() {
 
 	// TEST uint8_t
 	// this test also contains the allocation test
-	vector<std::any>  uint8_correct_values              { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	vector<float>  uint8_correct_values              { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	vector<std::any>  uint8_incorrect_too_many_values   { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 	vector<std::any>  uint8_incorrect_not_enough_values { 1, 2, 3, 4, 5, 6, 7, 8 };
 	vector<std::any>  uint8_incorrect_wrong_type_correct_number   { 1.f, 1.5, 4.567, 0.453, 2.f, 5.67, 32.12, 3.f, 6.32, 567.2, 4.f, 5.f };
@@ -108,6 +108,7 @@ bool test_creation() {
 	
 	// correct values
 	try {
+
 		Matrix a(MAT_8U, 3, 3, uint8_correct_values);
 
 		if (a.rows != 3) throw Exception(CREATION_INCORRECT_SIZE_ROWS);
@@ -115,10 +116,13 @@ bool test_creation() {
 		if (a.type != MAT_8U) throw Exception(CREATION_INCORRECT_DECLARED_TYPE);
 		if (*typeid(a.at(0, 0)).name() != 'h') throw Exception(CREATION_INCORRECT_TYPE);
 
-		// !!!! TODO : THIS IS THE CODE THROWING THE WIERD VECTOR ERROR
-		//if (a.row(0) != splitArray(uint8_correct_values, 0, 2)) throw Exception(CREATION_INCORRECT_VALUES);
-		//if (a.row(0) != splitArray(uint8_correct_values, 3, 5)) throw Exception(CREATION_INCORRECT_VALUES);
-		//if (a.row(0) != splitArray(uint8_correct_values, 6, 8)) throw Exception(CREATION_INCORRECT_VALUES);
+		cout << "Pass" << endl;
+
+		if (a.row(0) != splitArray(uint8_correct_values, 0, 2)) throw Exception(CREATION_INCORRECT_VALUES);
+		if (a.row(0) != splitArray(uint8_correct_values, 3, 5)) throw Exception(CREATION_INCORRECT_VALUES);
+		if (a.row(0) != splitArray(uint8_correct_values, 6, 8)) throw Exception(CREATION_INCORRECT_VALUES);
+
+		cout << "Pass" << endl;
 
 		//TODO: find way to cast before returning
 		if (std::any_cast<uint8_t>(a.col(0)[0]) != 1 || 
@@ -133,6 +137,9 @@ bool test_creation() {
 				std::any_cast<uint8_t>(a.col(2)[1]) != 6 || 
 				std::any_cast<uint8_t>(a.col(2)[2]) != 9) 
 						throw Exception(CREATION_INCORRECT_VALUES); 
+
+		cout << "Pass" << endl;
+
 		if (std::any_cast<uint8_t>(a.at(0, 2)) != 3) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
 		if (std::any_cast<uint8_t>(a.at(1, 1)) != 5) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
 		if (std::any_cast<uint8_t>(a.at(2, 0)) != 7) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
@@ -148,6 +155,8 @@ bool test_creation() {
 		cout << "Fail" << endl;
 		return 0;
 	}
+
+	cout << "Pass" << endl;
 
 	// too many values
 	try {

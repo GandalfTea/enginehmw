@@ -2,6 +2,8 @@
 #include "Matrix.h"
 #include <typeinfo>
 
+#include <iostream>
+
 namespace MEGA
 {
 
@@ -81,18 +83,22 @@ Matrix::Matrix( Matrix& a )
 Matrix::Matrix( int type, size_t rows, size_t cols, std::vector<std::any>& vals) 
 	: rows(rows), cols(cols), type(type)
 {
-	if( rows*cols < vals.size()) throw MatrixException(INPUT_TOO_MANY_VALUES);
-	if( rows*cols > vals.size()) throw MatrixException(INPUT_NOT_ENOUGH_VALUES);
-	allocator a = get_type(type);
-	for(size_t i{}; i < cols; i++) {
-		for(size_t f{}; f < rows; f++) {
-			if( typeid(vals[i + f]).name() != a.typeId) throw MatrixException(INPUT_VALUES_WRONG_TYPE);
-			a.row->push_back((std::any)vals[i + f]);
+	try {
+		if( rows*cols < vals.size()) throw MatrixException(INPUT_TOO_MANY_VALUES);
+		if( rows*cols > vals.size()) throw MatrixException(INPUT_NOT_ENOUGH_VALUES);
+		allocator a = get_type(type);
+		for(size_t i{}; i < cols; i++) {
+			for(size_t f{}; f < rows; f++) {
+				if( typeid(vals[i + f]).name() != a.typeId) throw MatrixException(INPUT_VALUES_WRONG_TYPE);
+				a.row->push_back((std::any)vals[i + f]);
+			}
+			a.matrix->push_back(*a.row);
 		}
-		a.matrix->push_back(*a.row);
+		this->data = *a.matrix;
+		set_step(type);
+	} catch (...) {
+		//std::cout << "Dicks went to the balls, man" << std::endl;
 	}
-	this->data = *a.matrix;
-	set_step(type);
 }
 
 /*
@@ -166,10 +172,12 @@ Scalar Matrix::at(size_t col, size_t row) const {
 	TODO: cast into specific type before returning.
 
 */
-std::vector<std::any> Matrix::row(size_t row) const {
-	std::vector<std::any> ret;
+
+// TODO: CHANGE FROM FLOAT TO STD::ANY
+std::vector<float> Matrix::row(size_t row) const {
+	std::vector<float> ret;
 	for( size_t i{}; i >= this->cols; i++) {
-		ret.push_back(data[i][row]);
+		ret.push_back(std::any_cast<float>(data[i][row]));
 	}
 	return ret;
 }
@@ -181,7 +189,7 @@ std::vector<std::any> Matrix::row(size_t row) const {
 
 */
 std::vector<std::any> Matrix::col( size_t col ) const {
-	std::vector<std::any> ret = this->data[col];
+	std::vector<std::any> ret(this->data[col]);
 	return ret;
 }
 
