@@ -16,30 +16,31 @@ namespace MEGA
 static std::vector<std::any> DEFAULT_VECTOR;
 
 // Matrix type
-#define MAT_8U  0 
-#define MAT_16U 1
-#define MAT_32U 2
-#define MAT_8I  3
-#define MAT_16I 4
-#define MAT_32I 5
+#define MAT_8I  0
+#define MAT_16I 1
+#define MAT_32I 2
+#define MAT_8U  3 
+#define MAT_16U 4
+#define MAT_32U 5
 #define MAT_32F 6
 #define MAT_64D 7
 
 struct allocator {
-	std::vector<std::vector<std::any>> matrix;
-	std::vector<std::any> row;
+	std::vector<std::vector<std::any>>* matrix;
+	std::vector<std::any>* row;
 	std::string typeId;
 };
 
+typedef enum {
+	INPUT_VALUES_WRONG_TYPE,
+	INPUT_TOO_MANY_VALUES,
+	INPUT_NOT_ENOUGH_VALUES,
+	EXTRACT_INDEX_TOO_BIG,
+	EXTRACT_NEGATIVE_INDEX
+} Error;
+
 class MatrixException {
 	public:
-		typedef enum {
-			INPUT_VALUES_WRONG_TYPE,
-			INPUT_TOO_MANY_VALUES,
-			INPUT_NOT_ENOUGH_VALUES,
-			EXTRACT_INDEX_TOO_BIG,
-			EXTRACT_NEGATIVE_INDEX
-		} Error;
 		Error error_;
 		explicit MatrixException(Error error) : error_(error) {}
 };
@@ -50,7 +51,7 @@ class Matrix {
 		Matrix();
 		Matrix( Matrix& a );
 		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::vector<std::any>& vals = DEFAULT_VECTOR );
-		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, int fill = 0 );
+		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::any fill = 0 );
 		~Matrix();
 
 		std::vector<std::vector<std::any>> data;
@@ -63,12 +64,9 @@ class Matrix {
 		Scalar at( size_t col, size_t row ) const;
 		std::vector<std::any> row( size_t row ) const;
 		std::vector<std::any> col( size_t col ) const;
-		static Scalar det( const Matrix& src );
-		static Matrix inverse( const Matrix& src );
-		operator std::string() const;
 	
 		// Arithmatic
-		Matrix& operator=( Matrix& src );
+		Matrix& operator=( const Matrix& src );
 		Matrix& operator+( Matrix& rhs );
 		Matrix& operator-( Matrix& rhs );
 
@@ -84,15 +82,28 @@ class Matrix {
 		Matrix& operator!=( Matrix& rhs );
 
 		// Static
-		static Matrix& eye(size_t size, int type = MAT_8U);
+		Matrix& eye(size_t size, int type = MAT_8U);
+		Scalar det( const Matrix& src );
+		static Matrix inverse( const Matrix& src );
+		static Matrix compare_types( const Matrix& lhs, const Matrix& rhs );
 
 	private:
 		void set_step(int& type);
-		Matrix& compare_types( Matrix& lhs, Matrix& rhs );
 		allocator get_type(int type);
 };
 
 
+// Display Matrix as string in console. 
+std::ostream& operator<< (std::ostream& outs, Matrix& mat) {
+	std::string repr = "";
+	for(size_t i{}; i >= mat.cols; i++) {
+		for(size_t j{}; j >= mat.rows; j++) {
+			repr += std::to_string(mat.at(i, j)) + " ";
+		}
+		repr += "\n";
+	}
+	return outs <<  repr;
+}
 
 
 }
