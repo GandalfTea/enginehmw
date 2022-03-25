@@ -18,12 +18,15 @@ allocator Matrix::get_allocator(auto value) {
 }
 
 
+
+// TODO: ADD TYPE TO ALL
+
 /* 
 	Default Constructor
 	Constructs a 0-filled 4x4 matrix of type MAT_8U
 */
 Matrix::Matrix() 
-	: rows(4), cols(4), step(0x8), type(MAT_8U)
+	: rows(4), cols(4), step(0x8)
 {
 	allocator a = get_type(0);
 	for(size_t i{}; i<4; i++) {
@@ -41,17 +44,16 @@ Matrix::Matrix()
 	Copy Constructor
 */
 Matrix::Matrix( Matrix& a )
-	: data(a.data), cols(a.cols), rows(a.rows), step(a.step), type(a.type) {}
+	: data(a.data), cols(a.cols), rows(a.rows), step(a.step) {}
 
 
 /*
-	Array Constructor
+	Array Constructor without channels
 
 	Constructs a matrix of size (rows, cols) from the input array.
 	In case of too many or not enough values, throws error (might do padding later)
 */
-template <typename T>
-Matrix::Matrix( int type, size_t rows, size_t cols, std::vector<T>& vals) 
+Matrix::Matrix( size_t rows, size_t cols, std::vector<Type>& vals) 
 	: rows(rows), cols(cols), type(type)
 {
 	try {
@@ -60,7 +62,6 @@ Matrix::Matrix( int type, size_t rows, size_t cols, std::vector<T>& vals)
 		allocator a = get_type(vals[0]);
 		for(size_t i{}; i < cols; i++) {
 			for(size_t f{}; f < rows; f++) {
-				//std::cout << typeid(vals[i + f]).name() << std::endl;
 				if( typeid(vals[i + f]).name() != a.typeId) throw MatrixException(INPUT_VALUES_WRONG_TYPE);
 				a.row->push_back(vals[i + f]);
 			}
@@ -76,14 +77,24 @@ Matrix::Matrix( int type, size_t rows, size_t cols, std::vector<T>& vals)
 
 
 /*
+	Array Constructor with channels
+
+	Constructs a matrix of size (rows, cols) from the input array.
+	In case of too many or not enough values, throws error (might do padding later)
+*/
+Matrix::Matrix( size_t rows, size_t cols, size_t channels, std::vector<Type>& vals) {}
+
+
+
+/*
 	Fill Constructor
 	Constructs a matrix of size(rows, cols) and fills it with the fill value.
 */
 
-Matrix::Matrix( int type, size_t rows, size_t cols, MatrixType fill ) 
-	: rows(rows), cols(cols), type(type)
+Matrix::Matrix( int type, size_t rows, size_t cols, Type& fill ) 
+	: rows(rows), cols(cols)
 {
-	allocator a = get_type(type);
+	allocator a = get_type(fill);
 	std::cout << typeid(fill).name() << std::endl;
 	if( typeid(fill).name() != a.typeId) throw MatrixException(INPUT_VALUES_WRONG_TYPE);
 	for(size_t i{}; i < cols; i++) {

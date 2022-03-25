@@ -49,26 +49,26 @@ inline std::ostream& operator<< (std::ostream& outs, MatrixException& err) {
 
 
 
-template<class T>
+template<class Type>
 class Matrix {
 	public:
 		Matrix();
-		Matrix( Matrix& a );
-		Matrix( size_t rows = 2, size_t cols = 2, size_t channels, std::vector<T>& vals = DEFAULT_VECTOR );
-		Matrix( size_t rows = 2, size_t cols = 2, std::vector<T>& vals = DEFAULT_VECTOR );
-		Matrix( size_t rows = 2, size_t cols = 2, T& fill = 0 );
+		Matrix( Matrix<Type>& a ); // TODO: Copy constructor from other types
+		Matrix( size_t rows = 2, size_t cols = 2, size_t channels = 1, std::vector<Type>& vals = DEFAULT_VECTOR );
+		Matrix( size_t rows = 2, size_t cols = 2, std::vector<Type>& vals = DEFAULT_VECTOR );
+		Matrix( size_t rows = 2, size_t cols = 2, Type& fill = 0 );
 		~Matrix();
 
-		std::vector<std::vector<T>> data;
+		std::vector<std::vector<Type>> data;
 		uint16_t cols;
 		uint16_t rows;
 		uchar step = 0x00;
 		mutable uint8_t type;
 
 		// Helpers
-		MatrixType at( size_t col, size_t row ) const;
-		std::vector<MatrixType> row( size_t row ) const;
-		std::vector<MatrixType> col( size_t col ) const;
+		Type at( size_t col, size_t row ) const;
+		std::vector<Type> row( size_t row ) const;
+		std::vector<Type> col( size_t col ) const;
 	
 		// Arithmatic
 		Matrix& operator=( const Matrix& src );
@@ -94,13 +94,14 @@ class Matrix {
 
 	private:
 		void set_step(int& type);
-		allocator get_allocator(auto& value);
+		allocator<Type> get_allocator(auto& value);
 };
 
 // TODO: Multiple definition of operator<< ?
 
 // Display Matrix as string in console. 
-inline std::ostream& operator<< (std::ostream& outs, Matrix& mat) {
+template <typename T>
+inline std::ostream& operator<< (std::ostream& outs, Matrix<T>& mat) {
 	std::string repr = "";
 	for(size_t i{}; i >= mat.cols; i++) {
 		for(size_t j{}; j >= mat.rows; j++) {
