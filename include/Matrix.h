@@ -2,35 +2,22 @@
 #ifndef MATRIX
 #define MATRIX
 
-
 #include "Types.h"
-#include <vector>
-#include <cstdint>
 #include <stdio.h>
 #include <string>
-#include <Any>
+#include <iostream>
 
 namespace MEGA 
 {
 
-static std::vector<std::any> DEFAULT_VECTOR;
-
-// Matrix type
-#define MAT_8I  0
-#define MAT_16I 1
-#define MAT_32I 2
-#define MAT_8U  3 
-#define MAT_16U 4
-#define MAT_32U 5
-#define MAT_32F 6
-#define MAT_64D 7
-
+template <typename T>
 struct allocator {
-	std::vector<std::vector<std::any>>* matrix;
-	std::vector<std::any>* row;
+	std::vector<std::vector<T>> matrix;
+	std::vector<T> row;
 	std::string typeId;
 };
 
+// ERROR HANDLING
 typedef enum {
 	INPUT_VALUES_WRONG_TYPE,
 	INPUT_TOO_MANY_VALUES,
@@ -43,28 +30,45 @@ class MatrixException {
 	public:
 		Error error_;
 		explicit MatrixException(Error error) : error_(error) {}
+
 };
 
+inline std::ostream& operator<< (std::ostream& outs, MatrixException& err) {
+		if( err.error_ == INPUT_VALUES_WRONG_TYPE)
+			outs << "INPUT_VALUES_WRONG_TYPE";
+		else if( err.error_ == INPUT_TOO_MANY_VALUES)
+			outs << "INPUT_TOO_MANY_VALUES";
+		else if( err.error_ == INPUT_NOT_ENOUGH_VALUES)
+			outs << "INPUT_NOT_ENOGUH_VALUES";
+		else if( err.error_ == EXTRACT_INDEX_TOO_BIG)
+			outs << "EXTRACT_INDEX_TOO_BIG";
+		else if( err.error_ == EXTRACT_NEGATIVE_INDEX)
+			outs << "EXTRACT_NEGATIVE_INDEX";
+	return outs;
+}
 
+
+
+template<class T>
 class Matrix {
 	public:
 		Matrix();
 		Matrix( Matrix& a );
-		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::vector<std::any>& vals = DEFAULT_VECTOR );
-		Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::any fill = 0 );
+		Matrix( size_t rows = 2, size_t cols = 2, size_t channels, std::vector<T>& vals = DEFAULT_VECTOR );
+		Matrix( size_t rows = 2, size_t cols = 2, std::vector<T>& vals = DEFAULT_VECTOR );
+		Matrix( size_t rows = 2, size_t cols = 2, T& fill = 0 );
 		~Matrix();
 
-		std::vector<std::vector<std::any>> data;
-		unsigned int cols;
-		unsigned int rows;
+		std::vector<std::vector<T>> data;
+		uint16_t cols;
+		uint16_t rows;
 		uchar step = 0x00;
 		mutable uint8_t type;
 
 		// Helpers
-		Scalar at( size_t col, size_t row ) const;
-		// TODO: CHANGE FROM FLOAT TO STD::ANY
-		std::vector<float> row( size_t row ) const;
-		std::vector<std::any> col( size_t col ) const;
+		MatrixType at( size_t col, size_t row ) const;
+		std::vector<MatrixType> row( size_t row ) const;
+		std::vector<MatrixType> col( size_t col ) const;
 	
 		// Arithmatic
 		Matrix& operator=( const Matrix& src );
@@ -90,7 +94,7 @@ class Matrix {
 
 	private:
 		void set_step(int& type);
-		allocator get_type(int type);
+		allocator get_allocator(auto& value);
 };
 
 // TODO: Multiple definition of operator<< ?
