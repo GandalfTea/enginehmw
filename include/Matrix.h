@@ -38,12 +38,12 @@ typedef enum {
 	INPUT_NOT_ENOUGH_VALUES,
 	EXTRACT_INDEX_TOO_BIG,
 	EXTRACT_NEGATIVE_INDEX
-} Error;
+} MatrixError;
 
 class MatrixException {
 	public:
-		Error error_;
-		explicit MatrixException(Error error) : error_(error) {}
+		MatrixError error_;
+		explicit MatrixException(MatrixError error) : error_(error) {}
 
 };
 
@@ -86,8 +86,6 @@ class Matrix {
         }
 
 
-        // TODO: ADD TYPE TO ALL
-
         /*
             Copy Constructor
         */
@@ -113,7 +111,8 @@ class Matrix {
         Matrix( size_t rows = 2, size_t cols = 2, std::vector<Type>& vals = DEFAULT_VECTOR<Type>) 
             : rows(rows), cols(cols), type(type)
         {
-            try {
+                // DEBUG
+                std::cout << "\t" << std::to_string(rows*cols) << " for " << std::to_string(vals.size()) << std::endl;
                 if( rows*cols < vals.size()) throw MatrixException(INPUT_TOO_MANY_VALUES);
                 if( rows*cols > vals.size()) throw MatrixException(INPUT_NOT_ENOUGH_VALUES);
                 allocator a = get_allocator(vals[0]);
@@ -128,9 +127,6 @@ class Matrix {
                 this->data = a.matrix;
                 set_step((uint8_t)type);
                 set_type();
-            } catch (...) {
-                //std::cout << "Dicks went to the balls, man" << std::endl;
-            }
         }
 
 

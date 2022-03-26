@@ -96,6 +96,10 @@ inline std::vector<T> splitArray(const std::vector<T>& arr, size_t from, size_t 
 	return ret;
 }
 
+
+
+
+
 bool test_creation() {
 		
 	cout << "\n\nTesting :  Matrix Creation with Array of values." << endl;
@@ -105,14 +109,20 @@ bool test_creation() {
 	vector<uint8_t>  uint8_correct_values              { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	vector<uint8_t>  uint8_incorrect_too_many_values   { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 	vector<uint8_t>  uint8_incorrect_not_enough_values { 1, 2, 3, 4, 5, 6, 7, 8 };
-	vector<float>  uint8_incorrect_wrong_type_correct_number   { 1.f, 1.5, 4.567, 0.453, 2.f, 5.67, 32.12, 3.f, 6.32, 567.2, 4.f, 5.f };
-	vector<float>  uint8_incorrect_wrong_type_incorrect_number { 1.f, 1.5, 4.567, 0.453, 2.f, 5.67, 32.12, 3.f, 6.32, 567.2, 4.f };
+    vector<float>  float_correct_values {1.86, 8845.12548, 254.156, 0.2548, 0.5698, 0.002, 0.875, 8.2158 };
+    vector<float>  float_lotta_values;
+    for(size_t i{0}; i < 10000000; i++) {
+        float f = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+        float_lotta_values.push_back(f);
+    }
 
 	
 	// correct values
 	try {
 
 		Matrix<U8C1> a (3, 3, uint8_correct_values);
+        Matrix<F32C1> b (4, 2, float_correct_values);
+        Matrix<F32C1> c (500000, 20, float_lotta_values);
 
 		cout << "\tMatrix Metadata" << endl;
 
@@ -160,51 +170,41 @@ bool test_creation() {
 		return 0;
 
 	} catch(MatrixException exception) {
-		cout << "Fail " << exception << endl;
+		cout << "Fail " << endl;
 		return 0;
 	}
 
-	cout << "Matrix Creation : PASS" << endl;
-
 	cout << "\nTesting :  Matrix Creation with Incorrect Values" << endl;
 
-	// too many values
+
+
+
     cout << "\tToo Many Values" << endl;
 	try {
-		Matrix<U8C1> a (3, 3, uint8_incorrect_too_many_values);
+		Matrix<U8C1> a (2, 3, uint8_incorrect_too_many_values);
+	} catch(MatrixException exception) {
+		if( exception.error_ != MatrixError::INPUT_TOO_MANY_VALUES ) {
+			cout << "Fail" << endl;
+		}
+        cout << "\tPass" << endl;
+	} catch (...) {
+        cout << "Unexpected Error thrown. Stoping." << endl;
+    }
 
-	} catch(Error exception) {
-		if( exception != Error::INPUT_TOO_MANY_VALUES ) {
+
+
+
+    cout << "\tNot Enough Values" << endl;
+	try {
+		Matrix<U8C1> a (3, 3, uint8_incorrect_not_enough_values);
+
+	} catch(MatrixException exception) {
+		if( exception.error_ != MatrixError::INPUT_NOT_ENOUGH_VALUES ) {
 			cout << "Fail" << endl;
 		}
         cout << "\tPass" << endl;
 	}
 
-	// not enough values
-	try {
-		Matrix<U8C1> a (3, 3, uint8_incorrect_not_enough_values);
 
-	} catch(Error exception) {
-		cout << "Fail" << endl;
-		return 0;
-	}
-
-	// incorrect type, correct number of values
-	try {
-		Matrix<F32C1> a (3, 3, uint8_incorrect_wrong_type_correct_number);
-
-	} catch(Error exception) {
-		cout << "Fail" << endl;
-		return 0;
-	}
-
-	// incorrect type, incorrect number of values
-	try {
-		Matrix<F32C1> a (3, 3, uint8_incorrect_wrong_type_incorrect_number);
-
-	} catch(Error exception) {
-		cout << "Fail" << endl;
-		return 0;
-	}
     return true;
 }
