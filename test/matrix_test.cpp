@@ -83,11 +83,12 @@ int main(int argc, char* argv[]) {
 	test_creation();
 }
 
-inline std::vector<float> splitArray(std::vector<float>& arr, size_t from, size_t to) {
+template <typename T>
+inline std::vector<T> splitArray(std::vector<T>& arr, size_t from, size_t to) {
 	if(from < 0 || to > arr.size()) {
 		cerr << "Fail SPLIT_INCORRECT_INDICIES from " << to_string(from) << " to " << to_string(to) << endl;
 	}
-	std::vector<float> ret;
+	std::vector<T> ret;
 	for(size_t i = from; i == to; i++) {
 		ret.push_back(arr[i]);
 	}
@@ -101,55 +102,56 @@ bool test_creation() {
 
 	// TEST uint8_t
 	// this test also contains the allocation test
-	vector<float>  uint8_correct_values              { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-	vector<std::any>  uint8_incorrect_too_many_values   { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-	vector<std::any>  uint8_incorrect_not_enough_values { 1, 2, 3, 4, 5, 6, 7, 8 };
-	vector<std::any>  uint8_incorrect_wrong_type_correct_number   { 1.f, 1.5, 4.567, 0.453, 2.f, 5.67, 32.12, 3.f, 6.32, 567.2, 4.f, 5.f };
-	vector<std::any>  uint8_incorrect_wrong_type_incorrect_number { 1.f, 1.5, 4.567, 0.453, 2.f, 5.67, 32.12, 3.f, 6.32, 567.2, 4.f };
+	vector<uint8_t>  uint8_correct_values              { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	vector<uint8_t>  uint8_incorrect_too_many_values   { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	vector<uint8_t>  uint8_incorrect_not_enough_values { 1, 2, 3, 4, 5, 6, 7, 8 };
+	vector<float>  uint8_incorrect_wrong_type_correct_number   { 1.f, 1.5, 4.567, 0.453, 2.f, 5.67, 32.12, 3.f, 6.32, 567.2, 4.f, 5.f };
+	vector<float>  uint8_incorrect_wrong_type_incorrect_number { 1.f, 1.5, 4.567, 0.453, 2.f, 5.67, 32.12, 3.f, 6.32, 567.2, 4.f };
 
 	
 	// correct values
 	try {
 
-		Matrix a(MAT_8U, 3, 3, uint8_correct_values);
+		Matrix<MAT_8UC1> a (3, 3, uint8_correct_values);
 
 		cout << "\tMatrix Metadata" << endl;
 
 		if (a.rows != 3) throw Exception(CREATION_INCORRECT_SIZE_ROWS);
 		if (a.cols != 3) throw Exception(CREATION_INCORRECT_SIZE_COLUMNS);
 		if (a.type != MAT_8U) throw Exception(CREATION_INCORRECT_DECLARED_TYPE);
+
 		// TODO: test after cast
 		//if (*typeid(a.at(0, 0)).name() != 'h') throw Exception(CREATION_INCORRECT_TYPE);
 
 		cout << "\tPass" << endl;
 		cout << "\tRows Integrity" << endl;
 
-		if (a.row(0) != splitArray(uint8_correct_values, 0, 2)) throw Exception(CREATION_INCORRECT_VALUES);
-		if (a.row(0) != splitArray(uint8_correct_values, 3, 5)) throw Exception(CREATION_INCORRECT_VALUES);
-		if (a.row(0) != splitArray(uint8_correct_values, 6, 8)) throw Exception(CREATION_INCORRECT_VALUES);
+		if (a.row(0) != splitArray<uint8_t>(uint8_correct_values, 0, 2)) throw Exception(CREATION_INCORRECT_VALUES);
+		if (a.row(0) != splitArray<uint8_t>(uint8_correct_values, 3, 5)) throw Exception(CREATION_INCORRECT_VALUES);
+		if (a.row(0) != splitArray<uint8_t>(uint8_correct_values, 6, 8)) throw Exception(CREATION_INCORRECT_VALUES);
 
 		cout << "\tPass" << endl;
 		cout << "\tColumns Integrity" << endl;
 
 		//TODO: find way to cast before returning
-		if (any_cast<uint8_t>(a.col(0)[0]) != 1 || 
-				any_cast<uint8_t>(a.col(0)[1]) != 4 || 
-				any_cast<uint8_t>(a.col(0)[2]) != 7)
-						throw Exception(CREATION_INCORRECT_VALUES); 
-		if (any_cast<uint8_t>(a.col(1)[0]) != 2 || 
-				any_cast<uint8_t>(a.col(1)[1]) != 5 || 
-				any_cast<uint8_t>(a.col(1)[2]) != 8) 
-						throw Exception(CREATION_INCORRECT_VALUES); 
-		if (any_cast<uint8_t>(a.col(2)[0]) != 3 || 
-				any_cast<uint8_t>(a.col(2)[1]) != 6 || 
-				any_cast<uint8_t>(a.col(2)[2]) != 9) 
-						throw Exception(CREATION_INCORRECT_VALUES); 
+		if (a.col(0)[0] != 1 || 
+		    a.col(0)[1] != 4 || 
+		    a.col(0)[2] != 7)
+				throw Exception(CREATION_INCORRECT_VALUES); 
+		if (a.col(1)[0] != 2 || 
+			a.col(1)[1] != 5 || 
+			a.col(1)[2] != 8) 
+				throw Exception(CREATION_INCORRECT_VALUES); 
+		if (a.col(2)[0] != 3 || 
+			a.col(2)[1] != 6 || 
+			a.col(2)[2] != 9) 
+				throw Exception(CREATION_INCORRECT_VALUES); 
 
 		cout << "Pass" << endl;
 
-		if (std::any_cast<uint8_t>(a.at(0, 2)) != 3) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
-		if (std::any_cast<uint8_t>(a.at(1, 1)) != 5) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
-		if (std::any_cast<uint8_t>(a.at(2, 0)) != 7) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
+		if (a.at(0, 2) != 3) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
+		if (a.at(1, 1) != 5) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
+		if (a.at(2, 0) != 7) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
 
 		//TODO: Test operator<<
 		//if ((std::string)a != "1 2 3\n4 5 6\n7 8 9\n") throw Exception(CREATION_INCORRECT_STRING_REPRESENTATION);
@@ -167,7 +169,7 @@ bool test_creation() {
 
 	// too many values
 	try {
-		Matrix a(MAT_8U, 3, 3, uint8_incorrect_too_many_values);
+		Matrix<MAT_8UC1> a (3, 3, uint8_incorrect_too_many_values);
 
 	} catch(Error exception) {
 		if( exception != Error::INPUT_TOO_MANY_VALUES ) {
@@ -178,7 +180,7 @@ bool test_creation() {
 
 	// not enough values
 	try {
-		Matrix a(MAT_8U, 3, 3, uint8_incorrect_not_enough_values);
+		Matrix<MAT_8UC1> a (3, 3, uint8_incorrect_not_enough_values);
 
 	} catch(Error exception) {
 		cout << "Fail" << endl;
@@ -187,7 +189,7 @@ bool test_creation() {
 
 	// incorrect type, correct number of values
 	try {
-		Matrix a(MAT_8U, 3, 3, uint8_incorrect_wrong_type_correct_number);
+		Matrix<MAT_8UC1> a (3, 3, uint8_incorrect_wrong_type_correct_number);
 
 	} catch(Error exception) {
 		cout << "Fail" << endl;
@@ -196,7 +198,7 @@ bool test_creation() {
 
 	// incorrect type, incorrect number of values
 	try {
-		Matrix a(MAT_8U, 3, 3, uint8_incorrect_wrong_type_incorrect_number);
+		Matrix<MAT_8UC1> a (3, 3, uint8_incorrect_wrong_type_incorrect_number);
 
 	} catch(Error exception) {
 		cout << "Fail" << endl;
