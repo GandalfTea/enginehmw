@@ -62,11 +62,12 @@ typedef enum {
 } TestingError;
 
 
+
 // this is very very stupid but works for now;
 class Exception {
 	public:
 		const char* printError[7] = {"CREATION_INCORRECT_SIZE_ROWS",
-															"CREATION_INCORRECT_SIZE_COLUMNS",
+								  "CREATION_INCORRECT_SIZE_COLUMNS",
 		                          "CREATION_INCORRECT_TYPE",
 		                          "CREATION_INCORRECT_DECLARED_TYPE",
 		                          "CREATION_INCORRECT_VALUES",
@@ -84,12 +85,12 @@ int main(int argc, char* argv[]) {
 }
 
 template <typename T>
-inline std::vector<T> splitArray(std::vector<T>& arr, size_t from, size_t to) {
+inline std::vector<T> splitArray(const std::vector<T>& arr, size_t from, size_t to) {
 	if(from < 0 || to > arr.size()) {
 		cerr << "Fail SPLIT_INCORRECT_INDICIES from " << to_string(from) << " to " << to_string(to) << endl;
 	}
-	std::vector<T> ret;
-	for(size_t i = from; i == to; i++) {
+	std::vector<T> ret{};
+	for(size_t i = from ; i <= to ; i++) {
 		ret.push_back(arr[i]);
 	}
 	return ret;
@@ -97,7 +98,6 @@ inline std::vector<T> splitArray(std::vector<T>& arr, size_t from, size_t to) {
 
 bool test_creation() {
 		
-	// testing 	Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::vector<std::any>& vals );
 	cout << "\n\nTesting :  Matrix Creation with Array of values." << endl;
 
 	// TEST uint8_t
@@ -112,13 +112,13 @@ bool test_creation() {
 	// correct values
 	try {
 
-		Matrix<MAT_8UC1> a (3, 3, uint8_correct_values);
+		Matrix<U8C1> a (3, 3, uint8_correct_values);
 
 		cout << "\tMatrix Metadata" << endl;
 
 		if (a.rows != 3) throw Exception(CREATION_INCORRECT_SIZE_ROWS);
 		if (a.cols != 3) throw Exception(CREATION_INCORRECT_SIZE_COLUMNS);
-		if (a.type != MAT_8U) throw Exception(CREATION_INCORRECT_DECLARED_TYPE);
+		if (a.type != MAT_U8C1) throw Exception(CREATION_INCORRECT_DECLARED_TYPE);
 
 		// TODO: test after cast
 		//if (*typeid(a.at(0, 0)).name() != 'h') throw Exception(CREATION_INCORRECT_TYPE);
@@ -127,13 +127,12 @@ bool test_creation() {
 		cout << "\tRows Integrity" << endl;
 
 		if (a.row(0) != splitArray<uint8_t>(uint8_correct_values, 0, 2)) throw Exception(CREATION_INCORRECT_VALUES);
-		if (a.row(0) != splitArray<uint8_t>(uint8_correct_values, 3, 5)) throw Exception(CREATION_INCORRECT_VALUES);
-		if (a.row(0) != splitArray<uint8_t>(uint8_correct_values, 6, 8)) throw Exception(CREATION_INCORRECT_VALUES);
+		if (a.row(1) != splitArray<uint8_t>(uint8_correct_values, 3, 5)) throw Exception(CREATION_INCORRECT_VALUES);
+		if (a.row(2) != splitArray<uint8_t>(uint8_correct_values, 6, 8)) throw Exception(CREATION_INCORRECT_VALUES);
 
 		cout << "\tPass" << endl;
 		cout << "\tColumns Integrity" << endl;
 
-		//TODO: find way to cast before returning
 		if (a.col(0)[0] != 1 || 
 		    a.col(0)[1] != 4 || 
 		    a.col(0)[2] != 7)
@@ -147,7 +146,7 @@ bool test_creation() {
 			a.col(2)[2] != 9) 
 				throw Exception(CREATION_INCORRECT_VALUES); 
 
-		cout << "Pass" << endl;
+		cout << "\tPass" << endl;
 
 		if (a.at(0, 2) != 3) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
 		if (a.at(1, 1) != 5) throw Exception(CREATION_INCORRECT_VALUES_SPECIFIC); 
@@ -165,22 +164,25 @@ bool test_creation() {
 		return 0;
 	}
 
-	cout << "Pass" << endl;
+	cout << "Matrix Creation : PASS" << endl;
+
+	cout << "\nTesting :  Matrix Creation with Incorrect Values" << endl;
 
 	// too many values
+    cout << "\tToo Many Values" << endl;
 	try {
-		Matrix<MAT_8UC1> a (3, 3, uint8_incorrect_too_many_values);
+		Matrix<U8C1> a (3, 3, uint8_incorrect_too_many_values);
 
 	} catch(Error exception) {
 		if( exception != Error::INPUT_TOO_MANY_VALUES ) {
 			cout << "Fail" << endl;
 		}
-		return 0;
+        cout << "\tPass" << endl;
 	}
 
 	// not enough values
 	try {
-		Matrix<MAT_8UC1> a (3, 3, uint8_incorrect_not_enough_values);
+		Matrix<U8C1> a (3, 3, uint8_incorrect_not_enough_values);
 
 	} catch(Error exception) {
 		cout << "Fail" << endl;
@@ -189,7 +191,7 @@ bool test_creation() {
 
 	// incorrect type, correct number of values
 	try {
-		Matrix<MAT_8UC1> a (3, 3, uint8_incorrect_wrong_type_correct_number);
+		Matrix<F32C1> a (3, 3, uint8_incorrect_wrong_type_correct_number);
 
 	} catch(Error exception) {
 		cout << "Fail" << endl;
@@ -198,11 +200,11 @@ bool test_creation() {
 
 	// incorrect type, incorrect number of values
 	try {
-		Matrix<MAT_8UC1> a (3, 3, uint8_incorrect_wrong_type_incorrect_number);
+		Matrix<F32C1> a (3, 3, uint8_incorrect_wrong_type_incorrect_number);
 
 	} catch(Error exception) {
 		cout << "Fail" << endl;
 		return 0;
 	}
-
+    return true;
 }
