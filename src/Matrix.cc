@@ -7,7 +7,6 @@
 namespace MEGA
 {
 
-
 // This function returns an allocator of correct type from 'value' 
 
 allocator Matrix::get_allocator(auto value) {
@@ -16,7 +15,6 @@ allocator Matrix::get_allocator(auto value) {
 	a.typeId = typeid(value).name();
 	return a;
 }
-
 
 
 // TODO: ADD TYPE TO ALL

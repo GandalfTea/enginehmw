@@ -84,7 +84,9 @@ int main(int argc, char* argv[]) {
 }
 
 inline std::vector<float> splitArray(std::vector<float>& arr, size_t from, size_t to) {
-	if(from <= 0 || to > arr.size()) throw 0;
+	if(from < 0 || to > arr.size()) {
+		cerr << "Fail SPLIT_INCORRECT_INDICIES from " << to_string(from) << " to " << to_string(to) << endl;
+	}
 	std::vector<float> ret;
 	for(size_t i = from; i == to; i++) {
 		ret.push_back(arr[i]);
@@ -95,7 +97,7 @@ inline std::vector<float> splitArray(std::vector<float>& arr, size_t from, size_
 bool test_creation() {
 		
 	// testing 	Matrix( int type = MAT_8U, size_t rows = 2, size_t cols = 2, std::vector<std::any>& vals );
-	cout << "Testing :  Matrix Creation with Array of values." << endl;
+	cout << "\n\nTesting :  Matrix Creation with Array of values." << endl;
 
 	// TEST uint8_t
 	// this test also contains the allocation test
@@ -111,31 +113,36 @@ bool test_creation() {
 
 		Matrix a(MAT_8U, 3, 3, uint8_correct_values);
 
+		cout << "\tMatrix Metadata" << endl;
+
 		if (a.rows != 3) throw Exception(CREATION_INCORRECT_SIZE_ROWS);
 		if (a.cols != 3) throw Exception(CREATION_INCORRECT_SIZE_COLUMNS);
 		if (a.type != MAT_8U) throw Exception(CREATION_INCORRECT_DECLARED_TYPE);
-		if (*typeid(a.at(0, 0)).name() != 'h') throw Exception(CREATION_INCORRECT_TYPE);
+		// TODO: test after cast
+		//if (*typeid(a.at(0, 0)).name() != 'h') throw Exception(CREATION_INCORRECT_TYPE);
 
-		cout << "Pass" << endl;
+		cout << "\tPass" << endl;
+		cout << "\tRows Integrity" << endl;
 
 		if (a.row(0) != splitArray(uint8_correct_values, 0, 2)) throw Exception(CREATION_INCORRECT_VALUES);
 		if (a.row(0) != splitArray(uint8_correct_values, 3, 5)) throw Exception(CREATION_INCORRECT_VALUES);
 		if (a.row(0) != splitArray(uint8_correct_values, 6, 8)) throw Exception(CREATION_INCORRECT_VALUES);
 
-		cout << "Pass" << endl;
+		cout << "\tPass" << endl;
+		cout << "\tColumns Integrity" << endl;
 
 		//TODO: find way to cast before returning
-		if (std::any_cast<uint8_t>(a.col(0)[0]) != 1 || 
-				std::any_cast<uint8_t>(a.col(0)[1]) != 4 || 
-				std::any_cast<uint8_t>(a.col(0)[2]) != 7)
+		if (any_cast<uint8_t>(a.col(0)[0]) != 1 || 
+				any_cast<uint8_t>(a.col(0)[1]) != 4 || 
+				any_cast<uint8_t>(a.col(0)[2]) != 7)
 						throw Exception(CREATION_INCORRECT_VALUES); 
-		if (std::any_cast<uint8_t>(a.col(1)[0]) != 2 || 
-				std::any_cast<uint8_t>(a.col(1)[1]) != 5 || 
-				std::any_cast<uint8_t>(a.col(1)[2]) != 8) 
+		if (any_cast<uint8_t>(a.col(1)[0]) != 2 || 
+				any_cast<uint8_t>(a.col(1)[1]) != 5 || 
+				any_cast<uint8_t>(a.col(1)[2]) != 8) 
 						throw Exception(CREATION_INCORRECT_VALUES); 
-		if (std::any_cast<uint8_t>(a.col(2)[0]) != 3 || 
-				std::any_cast<uint8_t>(a.col(2)[1]) != 6 || 
-				std::any_cast<uint8_t>(a.col(2)[2]) != 9) 
+		if (any_cast<uint8_t>(a.col(2)[0]) != 3 || 
+				any_cast<uint8_t>(a.col(2)[1]) != 6 || 
+				any_cast<uint8_t>(a.col(2)[2]) != 9) 
 						throw Exception(CREATION_INCORRECT_VALUES); 
 
 		cout << "Pass" << endl;
@@ -151,8 +158,8 @@ bool test_creation() {
 		cout << "Fail" << endl;
 		return 0;
 
-	} catch(Error exception) {
-		cout << "Fail" << endl;
+	} catch(MatrixException exception) {
+		cout << "Fail " << exception << endl;
 		return 0;
 	}
 
