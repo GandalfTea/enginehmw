@@ -97,7 +97,6 @@ class Matrix {
             Copy Constructor
             .....................................................................................
         */
-        */
 		Matrix( Matrix<Type>& a ) // TODO: Copy constructor from other types
 	        : data(a.data), cols(a.cols), rows(a.rows), step(a.step) {}
 
