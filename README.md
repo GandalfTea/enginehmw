@@ -1,23 +1,31 @@
+&nbsp;
 
 ### About
 Barely runnable game engine made for MEGA.      
 Optimised for ~ 10 million vertices, ~25MB.
 
-### Use
+&nbsp;
 
-##### Matrix
+### Docs
 
-Matrix types follow the format: TYPE (U)nsigned, (S)igned, (F)loat) + DEPTH (8, 16, 32, 64) + CHANNELS (1, 2, 3)
+&nbsp;
+
+#### Matrix
+
+Matrix types follow the format: 
+```
+TYPE (U)nsigned (S)igned (F)loat) + DEPTH (8, 16, 32, 64) + CHANNELS (1, 2, 3)
+
 U8C1 - unsigned integer of 8 bit depth with one channel - uint_t
 F32C3 - float value of 32 bit depth with 3 channels.
-
+```
 
 ```c++
 // Default Constructor
 Matrix<F32C1> a;
 
 // Array Constructor
-F64C1 array = { 0.3, 0.8451, 0.6598745, 4.126654, 0.25486, 0.789215 }
+F64C1 array = { 0.3, 0.8451, 0.6598745, 4.126654, 0.25486, 0.789215 };
 Matrix<F64C1> b (2, 3, array); // The size of array should not be bigger or smaller than rows*cols.
 
 // Fill Constructor
