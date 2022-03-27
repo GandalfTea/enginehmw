@@ -68,27 +68,28 @@ inline std::ostream& operator<< (std::ostream& outs, MatrixException& err) {
 
 template<class Type>
 class Matrix {
+
 	public:
+
+
+        // MEMBER VARIABLES
+		std::vector<std::vector<Type>> data;
+		uint16_t cols;
+		uint16_t rows;
+		uchar step = 0x00;
+		mutable MatrixType type;
+        // Maybe should hold allocator ?
+
 
         /*  .....................................................................................
 
 	        Default Constructor
-	        Constructs a 0-filled 4x4 matrix of type MAT_8U
-            TODO: THIS IS VERY SHIT, INIT A HEADER AND HAVE A CREATE FUNCTION
+            TODO: Init the header. Wait for the user to call the Matrix.create() function.
             .....................................................................................
         */
-		Matrix() 
-	        : rows(4), cols(4), step(0x8)
-        {
-	        allocator a = get_allocator(0);
-	        for(size_t i{}; i<4; i++) {
-		        for(size_t j{}; j<4; j++) {
-			        a.row->push_back(0);
-		        }
-		        a.matrix->push_back(*a.row);
-		        a.row->clear();
-	        }
-	        this->data = *a.matrix;
+		Matrix() {
+            set_type();
+            set_step((uint8_t)this->type);
         }
 
 
@@ -107,10 +108,12 @@ class Matrix {
             Array Constructor with channels
             Constructs a matrix of size (rows, cols) from the input array.
             In case of too many or not enough values, throws error (might do padding later)
+            TODO: IMPLEMENTATION
             .....................................................................................
         */
-        // TODO: IMPLEMENTATION
-		Matrix( size_t rows = 2, size_t cols = 2, size_t channels = 1, std::vector<Type>& vals = DEFAULT_VECTOR<Type> ) {}
+		Matrix(std::vector<Type>& vals, size_t rows, size_t cols, size_t channels = 1 ) {
+            std::cout << "CALL FOR CHANNEL" << std::endl;
+        }
 
 
 
@@ -121,7 +124,7 @@ class Matrix {
             In case of too many or not enough values, throws error (might do padding later)
             .....................................................................................
         */
-        Matrix( size_t cols = 2, size_t rows = 2, std::vector<Type>& vals = DEFAULT_VECTOR<Type>) 
+        Matrix( size_t cols, size_t rows, std::vector<Type>& vals = DEFAULT_VECTOR<Type>) 
             : rows(rows), cols(cols)
         {
             if( rows*cols < vals.size()) throw MatrixException(INPUT_TOO_MANY_VALUES);
@@ -147,11 +150,10 @@ class Matrix {
             Constructs a matrix of size(rows, cols) and fills it with the fill value.
             .....................................................................................
         */
-		Matrix( size_t rows = 2, size_t cols = 2, Type& fill = 0 )
+		Matrix( size_t rows, size_t cols, Type fill = 0 )
             : rows(rows), cols(cols)
         {
             allocator a = get_allocator(fill);
-            std::cout << typeid(fill).name() << std::endl;
             if( typeid(fill).name() != a.typeId) throw MatrixException(INPUT_VALUES_WRONG_TYPE);
             for(size_t i{}; i < cols; i++) {
                 for(size_t f{}; f < rows; f++) {
@@ -164,18 +166,15 @@ class Matrix {
             set_step((uint8_t)type);
         }
 
+
+        /*  .....................................................................................
+
+            Destructor 
+            Does object cleanul, frees up memory.
+            TODO: Implement
+            .....................................................................................
+        */
         ~Matrix() {};
-
-
-
-        // MEMBER VARIABLES
-// ................................................................................................
-
-		std::vector<std::vector<Type>> data;
-		uint16_t cols;
-		uint16_t rows;
-		uchar step = 0x00;
-		mutable MatrixType type;
 
 
 
@@ -241,39 +240,43 @@ class Matrix {
 // ................................................................................................
 
 
-        /*
+        /*  
+
             Identity Matrix Constructor
             Creates an identity square matrix of size (size).
+            TODO: Reimplement this using % size+1
             .....................................................................................
         */
 		Matrix& eye(size_t size, int type = MAT_U8C1) {
             this->rows = size;
             this->cols = size;
             this->step = 0x8;
-            this->type = type;
 
             int idx = 0;
             allocator a = get_allocator(type);
-            for(size_t i{}; i < size; i++) {
-                for(size_t f{}; f < size; f++) {
-                    if(f == idx) {
-                        a.row->push_back(1);
-                    }
-                    a.row->push_back(0);
+
+            for(size_t i{0}; i <= size; i++) {
+                for(size_t j{0}; j <= size; j++) {
+                    (i == j) ?  a.row.push_back(1) : a.row.push_back(0);
                 }
-                a.matrix->push_back(*a.row);
-                a.row->clear();
-                idx++;
+                a.matrix.push_back(a.row);
+                a.row.clear();
             }
-            this->data = *a.matrix;
+            this->data = a.matrix;
         }
 
-        //TODO: implement
+        /*  .....................................................................................
+
+            Get determinant of matrix.
+            TODO: implement
+            .....................................................................................
+        */
 		Scalar det( const Matrix& src );
 		static Matrix inverse( const Matrix& src );
 
 
-        /*
+        /*  .....................................................................................
+
             Compare different matrix types in order to cast to biggest one.
             .....................................................................................
         */

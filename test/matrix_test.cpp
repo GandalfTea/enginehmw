@@ -2,9 +2,11 @@
 #include <Matrix.h>
 #include <typeinfo>
 #include <iostream>
+#include <chrono>
 
 using namespace MEGA; 
 using namespace std;
+    using namespace std::chrono;
 
 /*
 TO TEST:
@@ -144,20 +146,52 @@ bool test_creation() {
 
 	
 	try {
-
+        auto start = high_resolution_clock::now();
 		Matrix<U8C1> a (3, 3, uint8_correct_values);
-		cout << "\t\t9 element - 3 x 3 uint8" << endl;
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+		cout << "\t\t" << duration.count() << "ms ...  9 elements - 3 x 3 MAT_U8C1" << endl;
+
+        start = high_resolution_clock::now();
         Matrix<F32C1> b (4, 2, float_correct_values);
-		cout << "\t\t9 element - 4 x 2 float" << endl;
+        stop = high_resolution_clock::now();
+        duration = duration_cast<microseconds>(stop - start);
+		cout << "\t\t" << duration.count() << "ms ...  9 elements - 4 x 2 MAT_F32C1" << endl;
+
+        start = high_resolution_clock::now();
         Matrix<F32C1> c (500000, 20, float_lotta_values);
-		cout << "\t\t10.000.000 element - 500000 x 20 float" << endl;
+        stop = high_resolution_clock::now();
+        duration = duration_cast<microseconds>(stop - start);
+		cout << "\t\t" << duration.count() << "ms ...  10.000.000 elements - 500000 x 20 MAT_F32C1" << endl;
+
+        start = high_resolution_clock::now();
         Matrix<F64C1> d (500, 200000, double_lotta_values);
-		cout << "\t\t100.000.000 element - 500 x 200000 double" << endl;
+        stop = high_resolution_clock::now();
+        duration = duration_cast<microseconds>(stop - start);
+		cout << "\t\t" << duration.count() << "ms ...  100.000.000 elements - 500 x 200000 MAT_F64C1" << endl;
+
+        start = high_resolution_clock::now();
         Matrix<U16C1> e (3162, 3162, uint16_lotta_values);
-		cout << "\t\t9.998.244 element - 3162 x 3162 uint16" << endl;
+        stop = high_resolution_clock::now();
+        duration = duration_cast<microseconds>(stop - start);
+		cout << "\t\t" << duration.count() << "ms ...  9.998.244 elements - 3162 x 3162 MAT_U16C1" << endl;
+
         //Matrix<U16C3> z (3162, 3162, uint16_3channel);
 
+        start = high_resolution_clock::now();
         Matrix<F32C1> x (4, 2500000, float_lotta_values);
+        stop = high_resolution_clock::now();
+        duration = duration_cast<microseconds>(stop - start);
+		cout << "\t\t" << duration.count() << "ms ...  10.000.000 elements - 4 x 2500000 MAT_F32C1" << endl;
+
+
+        // FILL CONSTRUCTOR
+        Matrix<F32C1> v (5, 10, 0);
+
+        // IDENTITY MATRIX
+        Matrix<F64C1> h;
+        h.eye(10);
+        
 
 		cout << "\tMatrix Metadata";
 
@@ -178,8 +212,6 @@ bool test_creation() {
 
 		cout << " - Pass" << endl;
 		cout << "\tColumns Integrity";
-
-        cout << x << endl;
 
 		if (a.col(0)[0] != 1 || 
 		    a.col(0)[1] != 4 || 
@@ -225,15 +257,14 @@ bool test_creation() {
 
 
 
-
-    cout << "\tToo Many Values" << endl;
+    cout << "\tToo Many Values";
 	try {
 		Matrix<U8C1> a (2, 3, uint8_incorrect_too_many_values);
 	} catch(MatrixException exception) {
 		if( exception.error_ != MatrixError::INPUT_TOO_MANY_VALUES ) {
 			cout << "Fail" << endl;
 		}
-        cout << "\tPass" << endl;
+        cout << " - Pass" << endl;
 	} catch (...) {
         cout << "Unexpected Error thrown. Stoping." << endl;
     }
@@ -241,7 +272,7 @@ bool test_creation() {
 
 
 
-    cout << "\tNot Enough Values" << endl;
+    cout << "\tNot Enough Values";
 	try {
 		Matrix<U8C1> a (3, 3, uint8_incorrect_not_enough_values);
 
@@ -249,7 +280,7 @@ bool test_creation() {
 		if( exception.error_ != MatrixError::INPUT_NOT_ENOUGH_VALUES ) {
 			cout << "Fail" << endl;
 		}
-        cout << "\tPass" << endl;
+        cout << " - Pass" << endl;
 	}
 
 
