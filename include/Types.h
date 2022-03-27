@@ -1,5 +1,6 @@
 #include <vector>
 #include <cstdint>
+#include <array>
 
 #ifndef ENGINE_GLOBAL_TYPES
 #define ENGINE_GLOBAL_TYPES
@@ -33,7 +34,7 @@ using S8C3 = int8_t[3];
 
 using U16C1 = uint16_t;
 using U16C2 = uint16_t[2];
-using U16C3 = uint16_t[3];
+using U16C3 = uint16_t[3]; 
 using S16C1 = int16_t;
 using S16C2 = int16_t[2];
 using S16C3 = int16_t[3];

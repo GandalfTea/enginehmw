@@ -32,6 +32,7 @@ std::vector<T> DEFAULT_VECTOR;
 
 
 // ERROR HANDLING
+// .....................................................................................
 typedef enum {
 	INPUT_VALUES_WRONG_TYPE,
 	INPUT_TOO_MANY_VALUES,
@@ -49,27 +50,32 @@ class MatrixException {
 
 inline std::ostream& operator<< (std::ostream& outs, MatrixException& err) {
 		if( err.error_ == INPUT_VALUES_WRONG_TYPE)
-			outs << "INPUT_VALUES_WRONG_TYPE" << " %s", __LINE__;
+			outs << "\nINPUT_VALUES_WRONG_TYPE" << " %s", __LINE__;
 		else if( err.error_ == INPUT_TOO_MANY_VALUES)
-			outs << "INPUT_TOO_MANY_VALUES";
+			outs << "\nINPUT_TOO_MANY_VALUES";
 		else if( err.error_ == INPUT_NOT_ENOUGH_VALUES)
-			outs << "INPUT_NOT_ENOGUH_VALUES";
+			outs << "\nINPUT_NOT_ENOGUH_VALUES";
 		else if( err.error_ == EXTRACT_INDEX_TOO_BIG)
-			outs << "EXTRACT_INDEX_TOO_BIG";
+			outs << "\nEXTRACT_INDEX_TOO_BIG";
 		else if( err.error_ == EXTRACT_NEGATIVE_INDEX)
-			outs << "EXTRACT_NEGATIVE_INDEX";
+			outs << "\nEXTRACT_NEGATIVE_INDEX";
 	return outs;
 }
 
 
+// MATRIX BASE TEMPLATE CLASS
+// .....................................................................................
 
 template<class Type>
 class Matrix {
 	public:
 
-        /* 
+        /*  .....................................................................................
+
 	        Default Constructor
 	        Constructs a 0-filled 4x4 matrix of type MAT_8U
+            TODO: THIS IS VERY SHIT, INIT A HEADER AND HAVE A CREATE FUNCTION
+            .....................................................................................
         */
 		Matrix() 
 	        : rows(4), cols(4), step(0x8)
@@ -86,53 +92,61 @@ class Matrix {
         }
 
 
-        /*
+        /*  .....................................................................................
+
             Copy Constructor
+            .....................................................................................
+        */
         */
 		Matrix( Matrix<Type>& a ) // TODO: Copy constructor from other types
 	        : data(a.data), cols(a.cols), rows(a.rows), step(a.step) {}
 
-        /*
-            Array Constructor with channels
 
+
+        /*  .....................................................................................
+
+            Array Constructor with channels
             Constructs a matrix of size (rows, cols) from the input array.
             In case of too many or not enough values, throws error (might do padding later)
+            .....................................................................................
         */
         // TODO: IMPLEMENTATION
 		Matrix( size_t rows = 2, size_t cols = 2, size_t channels = 1, std::vector<Type>& vals = DEFAULT_VECTOR<Type> ) {}
 
 
-        /*
-            Array Constructor without channels
 
+        /*  .....................................................................................
+
+            Array Constructor without channels
             Constructs a matrix of size (rows, cols) from the input array.
             In case of too many or not enough values, throws error (might do padding later)
+            .....................................................................................
         */
-        Matrix( size_t rows = 2, size_t cols = 2, std::vector<Type>& vals = DEFAULT_VECTOR<Type>) 
-            : rows(rows), cols(cols), type(type)
+        Matrix( size_t cols = 2, size_t rows = 2, std::vector<Type>& vals = DEFAULT_VECTOR<Type>) 
+            : rows(rows), cols(cols)
         {
-                // DEBUG
-                std::cout << "\t" << std::to_string(rows*cols) << " for " << std::to_string(vals.size()) << std::endl;
-                if( rows*cols < vals.size()) throw MatrixException(INPUT_TOO_MANY_VALUES);
-                if( rows*cols > vals.size()) throw MatrixException(INPUT_NOT_ENOUGH_VALUES);
-                allocator a = get_allocator(vals[0]);
-                for(size_t i{0}; i <= vals.size(); i++) {
-                    if( typeid(vals[i]).name() != a.typeId) throw MatrixException(INPUT_VALUES_WRONG_TYPE);
-                    if(i % rows == 0 && i != 0) {
-                        a.matrix.push_back(a.row);
-                        a.row.clear();
-                    }
-                    a.row.push_back(vals[i]);
+            if( rows*cols < vals.size()) throw MatrixException(INPUT_TOO_MANY_VALUES);
+            if( rows*cols > vals.size()) throw MatrixException(INPUT_NOT_ENOUGH_VALUES);
+            allocator a = get_allocator(vals[0]);
+            for(size_t i{0}; i <= vals.size(); i++) {
+                if( typeid(vals[i]).name() != a.typeId) throw MatrixException(INPUT_VALUES_WRONG_TYPE);
+                if(i % cols == 0 && i != 0) {
+                    a.matrix.push_back(a.row);
+                    a.row.clear();
                 }
-                this->data = a.matrix;
-                set_step((uint8_t)type);
-                set_type();
+                a.row.push_back(vals[i]);
+            }
+            this->data = a.matrix;
+            set_type();
+            set_step((uint8_t)this->type);
         }
 
 
-        /*
+        /*  .....................................................................................
+
             Fill Constructor
             Constructs a matrix of size(rows, cols) and fills it with the fill value.
+            .....................................................................................
         */
 		Matrix( size_t rows = 2, size_t cols = 2, Type& fill = 0 )
             : rows(rows), cols(cols)
@@ -153,7 +167,10 @@ class Matrix {
 
         ~Matrix() {};
 
+
+
         // MEMBER VARIABLES
+// ................................................................................................
 
 		std::vector<std::vector<Type>> data;
 		uint16_t cols;
@@ -161,11 +178,14 @@ class Matrix {
 		uchar step = 0x00;
 		mutable MatrixType type;
 
-		// Helpers
 
+
+		// Helpers
+// ................................................................................................
 
         /*
             Get specific element at (col, row) in the matrix.
+            .....................................................................................
         */
 		Type at( size_t col, size_t row ) const {
             if(col < 0 || row < 0) throw MatrixException(EXTRACT_NEGATIVE_INDEX);
@@ -175,6 +195,7 @@ class Matrix {
 
         /*
             Get all the elements in the row (row) in the matrix.
+            .....................................................................................
         */
 		std::vector<Type> row( size_t row ) const {
             std::vector<Type> ret;
@@ -186,6 +207,7 @@ class Matrix {
 
         /*
             Get all the elements in the column (col) in the matrix.
+            .....................................................................................
         */
 		std::vector<Type> col( size_t col ) const {
             std::vector<Type> ret;
@@ -197,6 +219,8 @@ class Matrix {
 
 	
 		// Arithmatic
+// ................................................................................................
+
 		Matrix& operator=( const Matrix& src );
 		Matrix& operator+( Matrix& rhs );
 		Matrix& operator-( Matrix& rhs );
@@ -215,11 +239,13 @@ class Matrix {
 
 
 		// Static
+// ................................................................................................
 
 
         /*
             Identity Matrix Constructor
             Creates an identity square matrix of size (size).
+            .....................................................................................
         */
 		Matrix& eye(size_t size, int type = MAT_U8C1) {
             this->rows = size;
@@ -243,9 +269,15 @@ class Matrix {
             this->data = *a.matrix;
         }
 
+        //TODO: implement
 		Scalar det( const Matrix& src );
 		static Matrix inverse( const Matrix& src );
 
+
+        /*
+            Compare different matrix types in order to cast to biggest one.
+            .....................................................................................
+        */
         static Matrix compare_types( const Matrix& lhs, const Matrix& rhs) {
             std::map<int, std::string> typeName { {0, "MAT_S8C1"}, {1, "MAT_S16C1"}, {2, "MAT_S32C1"}, {3, "MAT_U8C1"} , 
                                                           {4, "MAT_U16C1"}, {5, "MAT_U32C1"}, {6, "MAT_F32C1"}, {7, "MAT_F64C1"}};
@@ -271,6 +303,12 @@ class Matrix {
         }
 
     private:
+
+        /*
+            Set hex step between matrix elements 
+            (not in use, future use is planned, when the data in the matrix will be bits)
+            .....................................................................................
+        */
         void set_step(uint8_t type) {
             switch(type) {
                 case MAT_U8C1:
@@ -307,6 +345,7 @@ class Matrix {
         }
 
         // This function returns an allocator of correct type from 'value' 
+        //.....................................................................................
         allocator<Type> get_allocator(auto& value) {
             //using type_ptr = std::remove_reference<decltype(value)>::type;
             allocator<Type> a;
@@ -317,6 +356,7 @@ class Matrix {
 
         // set type from template input
         // terrible code, but there is not switch for string.
+        //.....................................................................................
         void set_type() {
             // TODO: Check for complex types
             if (*typeid(Type).name() == 'j') this->type = MAT_U32C1;
@@ -330,7 +370,10 @@ class Matrix {
         }
 };
 
-// TODO: Multiple definition of operator<< ?
+
+//      ARITHMETIC AND OPERATORS
+// ................................................................................................
+
 
 // Display Matrix as string in console. 
 template <typename T>
