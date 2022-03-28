@@ -6,6 +6,14 @@ Optimised for ~ 10 million vertices, ~25MB.
 
 &nbsp;
 
+### TODO:
+* Perlin noise random terrain generation
+* First person player movement
+* Object Collision
+* Gun with bullets that follow the cursor?
+
+&nbsp;
+
 ### Docs
 
 &nbsp;
