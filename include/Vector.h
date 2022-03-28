@@ -14,10 +14,16 @@
 
 #include <Types.h>
 #include <typeinfo>
+#include <iostream>
+#include <string>
 
 namespace MEGA {
 
 
+
+
+// VECTOR BASE TEMPLATE CLASS
+// .....................................................................................
 
 template <class Type>
 class Vector {
@@ -30,21 +36,48 @@ class Vector {
 		mutable MEGAType type;            // for now use matrix types
         // Maybe add T here
 
-        Vector() {}
+
+
+        /*  .....................................................................................
+
+	        Default Constructor
+            .....................................................................................
+        */
+        Vector() 
+            : size(-1)
+        {}
+
+
+
+        /*  .....................................................................................
+
+            Copy Constructor
+            .....................................................................................
+        */
         Vector( Vector& src ) {}
         
+
+        /*  .....................................................................................
+
+            Vector Constructor
+            .....................................................................................
+        */
         Vector( size_t size, std::vector<Type> vals ) {
-            if(vals.size() > size || vals.size() < size) throw 0;
+            if(vals.size() > size || vals.size() < size) throw 3;
             this->Data = vals;
             this->data = vals;
             this->size = size;
             setType();
-
-
-            
         }
 
-        // Transpose Vector
+
+		// Helpers
+// ................................................................................................
+
+        /*  
+            Transpose Vector 
+            .....................................................................................
+        */
         Vector<std::vector<Type>> T() {
             Vector<std::vector<Type>> ret;
             for(auto i : this->data) {
@@ -54,16 +87,33 @@ class Vector {
             return ret;
         }
 
-        // Add values to the vector
+        /*  
+            Add values to vector (vertical and horizontal) 
+            .....................................................................................
+        */
         void push_back(Type value) {
             this->Data.push_back(value);
             this->data.push_back(value);
+            this->size++;
         }
 
         void push_back(std::vector<Type> value) {
             this->Data.push_back(value);
             this->data.push_back(value);
+            this->size++;
         }
+
+        Type& operator[](int idx) {
+            return this->data[idx];
+        }
+
+		// Arithmetic 
+// ................................................................................................
+        inline bool operator!= (const Vector<Type>& lhs) {
+            return this->data != lhs.data;
+        }
+
+
 
 
     protected:
@@ -84,12 +134,17 @@ class Vector {
         }
 };
 
-// Display Vector as string in console. 
-// the face that this worked is insane
-
-}
+} // MEGA namespace
 
 
+/*  .....................................................................................
+
+    Display Vector as string in the console with operator<<.
+
+    We define a new to_string() function in the std namespace in order to represent
+    vertical vectors corectly in the following function. 
+    .....................................................................................
+*/
 namespace std {
 
 template <typename T>
@@ -105,7 +160,7 @@ inline std::string to_string(std::vector<T> src) {
     return repr;
 }
 
-}
+} // std namespace
 
 namespace MEGA {
 
@@ -119,7 +174,25 @@ inline std::ostream& operator<< (std::ostream& outs, Vector<T>& lhs) {
 	return outs <<  repr;
 }
 
+// TODO: THIS MOVE TOOK 0 IQ POINT, DELETE LATER
+template <typename T>
+inline std::ostream& operator<< (std::ostream& outs, Vector<T> lhs) {
+	std::string repr = "\n\t[ ";
+    for (auto i : lhs.data) {
+        repr += std::to_string(i) + ", ";
+    }
+    repr += " ]\n";
+	return outs <<  repr;
+}
+
+/*  .....................................................................................
+
+    Vector Arithmetic
+    .....................................................................................
+*/
+
+//inline bool operator== (Vector& rhs, Vector& lhs) {}
 
 
-} // namespace
+} // MEGA  namespace
 #endif

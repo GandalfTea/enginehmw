@@ -1,5 +1,7 @@
 
 #include <Matrix.h>
+#include <Vector.h>
+
 #include <typeinfo>
 #include <iostream>
 #include <chrono>
@@ -87,11 +89,11 @@ int main(int argc, char* argv[]) {
 }
 
 template <typename T>
-inline std::vector<T> splitArray(const std::vector<T>& arr, size_t from, size_t to) {
+inline const Vector<T> splitArray(const std::vector<T>& arr, size_t from, size_t to) {
 	if(from < 0 || to > arr.size()) {
 		cerr << "Fail SPLIT_INCORRECT_INDICIES from " << to_string(from) << " to " << to_string(to) << endl;
 	}
-	std::vector<T> ret{};
+	Vector<T> ret{};
 	for(size_t i = from ; i <= to ; i++) {
 		ret.push_back(arr[i]);
 	}
@@ -197,7 +199,7 @@ bool test_creation() {
 
 		if (a.rows != 3) throw Exception(CREATION_INCORRECT_SIZE_ROWS);
 		if (a.cols != 3) throw Exception(CREATION_INCORRECT_SIZE_COLUMNS);
-		if (a.type != MAT_U8C1) throw Exception(CREATION_INCORRECT_DECLARED_TYPE);
+		if (a.type != MEGA_U8C1) throw Exception(CREATION_INCORRECT_DECLARED_TYPE);
 
 		cout << " - Pass" << endl;
 		cout << "\tRows Integrity";

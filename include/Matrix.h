@@ -11,7 +11,9 @@
 #ifndef MATRIX
 #define MATRIX
 
-#include "Types.h"
+#include <Types.h>
+#include <Vector.h>
+
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -195,8 +197,8 @@ class Matrix {
             Get all the elements in the row (row) in the matrix.
             .....................................................................................
         */
-		std::vector<Type> row( size_t row ) const {
-            std::vector<Type> ret;
+		Vector<Type> row( size_t row ) const {
+            Vector<Type> ret;
             for( auto i : this->data[row]) { 
                 ret.push_back(i);
             }
@@ -207,8 +209,8 @@ class Matrix {
             Get all the elements in the column (col) in the matrix.
             .....................................................................................
         */
-		std::vector<Type> col( size_t col ) const {
-            std::vector<Type> ret;
+		Vector<Type> col( size_t col ) const {
+            Vector<Type> ret;
             for(auto i : data) {
                 ret.push_back(i[col]);
             }
@@ -245,6 +247,13 @@ class Matrix {
 		Matrix& operator==( Matrix& rhs );
 		Matrix& operator!=( Matrix& rhs );
 
+
+        /*  .....................................................................................
+
+            Dot Product with another Matrix 
+            TODO : MAKE REFERENCE
+            .....................................................................................
+        */
         Matrix& dot( Matrix& lhs) {
             std::vector<Type> results {};
             for( size_t i = 0; i < this->cols; i++) {
@@ -254,6 +263,34 @@ class Matrix {
                 }
             }
             Matrix<Type> result (this->cols, lhs.rows, results);
+            return result;
+        }
+
+    
+        /*  .....................................................................................
+
+            Dot Product with a Column Vector
+            TODO : MAKE REFERENCE
+            .....................................................................................
+        */
+        Matrix dot( Vector<std::vector<Type>> lhs) {
+            if(this->cols != lhs.size) throw 0;
+            std::vector<Type> results {};
+            std::vector<Type> buffer {};
+            for( size_t i = 0; i <= this->cols; i++) {
+                for( size_t f = 0; f <= lhs.size; f++ ) {
+                    Type res = this->at(i, f) * lhs[f][0];
+                    //std::cout << this->at(i, f) << " * " << lhs[f][0] << " = " << res << std::endl;
+                    buffer.push_back(res);
+                }
+                Type entry = 0;
+                for( auto i : buffer) {
+                    entry += i;
+                }
+                results.push_back(entry);
+                buffer.clear();
+            }
+            Matrix<Type> result (1, lhs.size+1, results);
             return result;
         }
 
@@ -428,35 +465,35 @@ class Matrix {
         */
         void set_step(uint8_t type) {
             switch(type) {
-                case MAT_U8C1:
-                case MAT_U8C2:
-                case MAT_U8C3:
-                case MAT_S8C1:
-                case MAT_S8C2:
-                case MAT_S8C3:
+                case MEGA_U8C1:
+                case MEGA_U8C2:
+                case MEGA_U8C3:
+                case MEGA_S8C1:
+                case MEGA_S8C2:
+                case MEGA_S8C3:
                     this->step = 0x8;
                     break;
-                case MAT_U16C1:
-                case MAT_U16C2:
-                case MAT_U16C3:
-                case MAT_S16C1:
-                case MAT_S16C2:
-                case MAT_S16C3:
+                case MEGA_U16C1:
+                case MEGA_U16C2:
+                case MEGA_U16C3:
+                case MEGA_S16C1:
+                case MEGA_S16C2:
+                case MEGA_S16C3:
                     this->step = 0x10;
 
-                case MAT_U32C1:
-                case MAT_U32C2:
-                case MAT_U32C3:
-                case MAT_S32C1:
-                case MAT_S32C2:
-                case MAT_S32C3:
-                case MAT_F32C1:
-                case MAT_F32C2:
-                case MAT_F32C3:
+                case MEGA_U32C1:
+                case MEGA_U32C2:
+                case MEGA_U32C3:
+                case MEGA_S32C1:
+                case MEGA_S32C2:
+                case MEGA_S32C3:
+                case MEGA_F32C1:
+                case MEGA_F32C2:
+                case MEGA_F32C3:
                     this->step = 0x20;
-                case MAT_F64C1:
-                case MAT_F64C2:
-                case MAT_F64C3:
+                case MEGA_F64C1:
+                case MEGA_F64C2:
+                case MEGA_F64C3:
                     this->step = 0x40;
             }
         }
