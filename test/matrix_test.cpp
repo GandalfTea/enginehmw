@@ -189,7 +189,7 @@ bool test_creation() {
         Matrix<F32C1> v (5, 10, 0);
 
         // IDENTITY MATRIX
-        Matrix<F64C1> h;
+        Matrix<U16C1> h;
         h.eye(10);
         
 

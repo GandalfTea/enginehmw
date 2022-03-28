@@ -1,6 +1,5 @@
 #include <vector>
 #include <cstdint>
-#include <array>
 
 #ifndef ENGINE_GLOBAL_TYPES
 #define ENGINE_GLOBAL_TYPES
@@ -14,15 +13,15 @@ MATRIX TYPE FORMAT: (Type) + (Depth) + (Number of channels)
 
 */
 
-enum MatrixType {
-    MAT_U8C1, MAT_U8C2, MAT_U8C3,
-    MAT_S8C1, MAT_S8C2, MAT_S8C3,
-    MAT_U16C1, MAT_U16C2, MAT_U16C3,
-    MAT_S16C1, MAT_S16C2, MAT_S16C3,
-    MAT_U32C1, MAT_U32C2, MAT_U32C3,
-    MAT_S32C1, MAT_S32C2, MAT_S32C3,
-    MAT_F32C1, MAT_F32C2, MAT_F32C3,
-    MAT_F64C1, MAT_F64C2, MAT_F64C3
+enum MEGAType {
+    MEGA_U8C1,  MEGA_U8C2,  MEGA_U8C3,
+    MEGA_S8C1,  MEGA_S8C2,  MEGA_S8C3,
+    MEGA_U16C1, MEGA_U16C2, MEGA_U16C3,
+    MEGA_S16C1, MEGA_S16C2, MEGA_S16C3,
+    MEGA_U32C1, MEGA_U32C2, MEGA_U32C3,
+    MEGA_S32C1, MEGA_S32C2, MEGA_S32C3,
+    MEGA_F32C1, MEGA_F32C2, MEGA_F32C3,
+    MEGA_F64C1, MEGA_F64C2, MEGA_F64C3
 };
 
 using U8C1 = uint8_t;
@@ -54,9 +53,6 @@ using F64C2 = double[2];
 using F64C3 = double[3];
 
 
-
-
-
 typedef int Scalar;
 typedef unsigned char uchar;
 
@@ -73,6 +69,9 @@ struct Model {
 	std::vector<Vertex> verticies{};
 	std::vector<unsigned int> IDs{};
 };
+
+
+
 
 }
 #endif

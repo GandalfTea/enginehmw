@@ -77,7 +77,7 @@ class Matrix {
 		uint16_t cols;
 		uint16_t rows;
 		uchar step = 0x00;
-		mutable MatrixType type;
+		mutable MEGAType type;
         // Maybe should hold allocator ?
 
 
@@ -215,6 +215,17 @@ class Matrix {
             return ret;
         }
 
+        /*
+            Set specific value inside the matrix
+            TODO: FIND A BETTER WAY TO FORMAT THIS, THE VALUES ARE CONFUSING. 
+            .....................................................................................
+        */
+        void set(size_t col, size_t row, Type value) {
+            if(col < 0 || row < 0) throw MatrixException(EXTRACT_NEGATIVE_INDEX);
+            if(col > this->cols || row > this->rows) throw MatrixException(EXTRACT_INDEX_TOO_BIG);
+            this->data[col][row] = value;
+        }
+
 	
 		// Arithmatic
 // ................................................................................................
@@ -234,6 +245,21 @@ class Matrix {
 		Matrix& operator==( Matrix& rhs );
 		Matrix& operator!=( Matrix& rhs );
 
+        Matrix& dot( Matrix& lhs) {
+            std::vector<Type> results {};
+            for( size_t i = 0; i < this->cols; i++) {
+                for( size_t f = 0; f < lhs.rows; f++ ) {
+                    Type sum = this->at(i, f) + lhs.at(f, i);
+                    results.push_back(sum);
+                }
+            }
+            Matrix<Type> result (this->cols, lhs.rows, results);
+            return result;
+        }
+
+        static Matrix& dot (std::vector<Type> rhs, Matrix& lhs) {
+            
+        }
 
 
 		// Static
@@ -247,10 +273,10 @@ class Matrix {
             TODO: Reimplement this using % size+1
             .....................................................................................
         */
-		Matrix& eye(size_t size, int type = MAT_U8C1) {
+		Matrix& eye(size_t size, int type = MEGA_U8C1) {
             this->rows = size;
             this->cols = size;
-            this->step = 0x8;
+            // set step
 
             int idx = 0;
             allocator a = get_allocator(type);
@@ -264,6 +290,95 @@ class Matrix {
             }
             this->data = a.matrix;
         }
+
+
+        /*  .....................................................................................
+
+            Create Translation Matrix
+            
+            1  0  0  tx
+            0  1  0  ty
+            0  0  1  tz
+            0  0  0  1
+
+            .....................................................................................
+        */
+        Matrix& translation(size_t tx, size_t ty, size_t tz) {
+            this->eye(3);
+            this->set(0, 3, tx);
+            this->set(1, 3, ty);
+            this->set(2, 3, tz);
+        }
+
+
+
+        /*  .....................................................................................
+
+            Create Rotation  Matrix
+
+
+                 1    0    0             cosB  0 -sinB            cosY  sinY  0
+            Rx = 0  cos&  sin&      Ry =   0   1   0        Rz = -sinY  cosY  0
+                 0 -sin&  cos&           sinB  0  cosB             0     0    1
+
+
+                r11  r12  r13
+            R = r21  r22  r23
+                r31  r32  r33
+
+            .....................................................................................
+        */
+        Matrix& rotation(const std::vector<float> values) {
+            // set coords to args.  
+        }
+
+        Matrix& rotationX(int angle) {
+            // set coords to args.  
+        }
+
+        Matrix& rotationY(int angle) {
+            // set coords to args.  
+        }
+
+        Matrix& rotationZ(int angle) {
+            // set coords to args.  
+        }
+
+
+        /*  .....................................................................................
+
+            Create Scaling Matrix
+            
+            sx 0  0  0
+            0  sy 0  0
+            0  0  sz 0
+            0  0  0  1
+
+            .....................................................................................
+        */
+        Matrix& scaling(size_t x, size_t y, size_t z) {
+            this->eye(4);
+            // set coords to args.  
+        }
+
+
+        /*  .....................................................................................
+
+            Create Rt Matrix
+
+                 r11  r12  r13  tx
+            Rt = r21  r22  r23  ty
+                 r31  r32  r33  tz
+                  0    0    0   1
+
+            .....................................................................................
+        */
+        Matrix& Rt(size_t x, size_t y, size_t z) {
+            this->eye(4);
+            // set coords to args.  
+        }
+
+
 
         /*  .....................................................................................
 
@@ -281,8 +396,8 @@ class Matrix {
             .....................................................................................
         */
         static Matrix compare_types( const Matrix& lhs, const Matrix& rhs) {
-            std::map<int, std::string> typeName { {0, "MAT_S8C1"}, {1, "MAT_S16C1"}, {2, "MAT_S32C1"}, {3, "MAT_U8C1"} , 
-                                                          {4, "MAT_U16C1"}, {5, "MAT_U32C1"}, {6, "MAT_F32C1"}, {7, "MAT_F64C1"}};
+            std::map<int, std::string> typeName { {0, "MEGA_S8C1"}, {1, "MEGA_S16C1"}, {2, "MEGA_S32C1"}, {3, "MEGA_U8C1"} , 
+                                                          {4, "MEGA_U16C1"}, {5, "MEGA_U32C1"}, {6, "MEGA_F32C1"}, {7, "MEGA_F64C1"}};
 
             // If they are not the same type, cast into the biggest.
             if( lhs.type != rhs.type ) {
@@ -361,14 +476,14 @@ class Matrix {
         //.....................................................................................
         void set_type() {
             // TODO: Check for complex types
-            if (*typeid(Type).name() == 'j') this->type = MAT_U32C1;
-            else if (*typeid(Type).name() == 't') this->type = MAT_U16C1;
-            else if (*typeid(Type).name() == 'h') this->type = MAT_U8C1;
-            else if (*typeid(Type).name() == 'i') this->type = MAT_S32C1;
-            else if (*typeid(Type).name() == 's') this->type = MAT_S16C1;
-            else if (*typeid(Type).name() == 'a') this->type = MAT_S8C1;
-            else if (*typeid(Type).name() == 'f') this->type = MAT_U32C1;
-            else if (*typeid(Type).name() == 'd') this->type = MAT_F64C1;
+            if (*typeid(Type).name() == 'j') this->type = MEGA_U32C1;
+            else if (*typeid(Type).name() == 't') this->type = MEGA_U16C1;
+            else if (*typeid(Type).name() == 'h') this->type = MEGA_U8C1;
+            else if (*typeid(Type).name() == 'i') this->type = MEGA_S32C1;
+            else if (*typeid(Type).name() == 's') this->type = MEGA_S16C1;
+            else if (*typeid(Type).name() == 'a') this->type = MEGA_S8C1;
+            else if (*typeid(Type).name() == 'f') this->type = MEGA_U32C1;
+            else if (*typeid(Type).name() == 'd') this->type = MEGA_F64C1;
         }
 };
 
