@@ -13,9 +13,11 @@
 #define VECTOR
 
 #include <Types.h>
+
 #include <typeinfo>
 #include <iostream>
 #include <string>
+#include <cmath>     // this is included just for a sqrt function. Implement yourself
 
 namespace MEGA {
 
@@ -32,6 +34,7 @@ class Vector {
         // MEMBER VARIABLES
         std::vector<Type> data;           // public data in vector format
 		uint16_t size;                    // size of vectpr
+        uint16_t L;                       // length of vector;
 		uchar step = 0x00;                // step between elements (bit depth of type)
 		mutable MEGAType type;            // for now use matrix types
         // Maybe add T here
@@ -68,6 +71,13 @@ class Vector {
             this->data = vals;
             this->size = size;
             setType();
+
+            // calculate the length of the vector
+            float length{0};
+            for( auto i : vals ) {
+                length += i*i;
+            }
+            this->L = sqrt(length);
         }
 
 
@@ -111,6 +121,15 @@ class Vector {
 // ................................................................................................
         inline bool operator!= (const Vector<Type>& lhs) {
             return this->data != lhs.data;
+        }
+
+
+        inline Scalar dot(const Vector<Type>& lhs) {
+            size_t result;
+            for (size_t i = 0; i <= this->size; i++) {
+                result += this->data[i] + lhs.data[i];
+            }
+            return result;
         }
 
 
@@ -166,17 +185,6 @@ namespace MEGA {
 
 template <typename T>
 inline std::ostream& operator<< (std::ostream& outs, Vector<T>& lhs) {
-	std::string repr = "\n\t[ ";
-    for (auto i : lhs.data) {
-        repr += std::to_string(i) + ", ";
-    }
-    repr += " ]\n";
-	return outs <<  repr;
-}
-
-// TODO: THIS MOVE TOOK 0 IQ POINT, DELETE LATER
-template <typename T>
-inline std::ostream& operator<< (std::ostream& outs, Vector<T> lhs) {
 	std::string repr = "\n\t[ ";
     for (auto i : lhs.data) {
         repr += std::to_string(i) + ", ";
