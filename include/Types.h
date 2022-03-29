@@ -67,6 +67,7 @@ struct Vertex {
 
 struct Model {
 	std::vector<Vertex> verticies{};
+    //MEGA::Matrix<F32C1> vertices;
 	std::vector<unsigned int> IDs{};
 };
 

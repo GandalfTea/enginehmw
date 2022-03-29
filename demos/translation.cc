@@ -18,7 +18,7 @@ int main() {
     MEGA::Matrix<MEGA::F32C1> cubeVert (4, 8, cubeHomogenous);
 
     MEGA::Matrix<MEGA::F32C1> t;
-    t.translation(5, 3, 2);
+    t.translation(500, 500, 500);
 
     cout << cubeVert << endl;
     cout << t << endl;
