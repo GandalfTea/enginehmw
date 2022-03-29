@@ -62,7 +62,7 @@ class Vector {
 
         /*  .....................................................................................
 
-            Vector Constructor
+            Vector Constructor with Array initializer
             .....................................................................................
         */
         Vector( size_t size, std::vector<Type> vals ) {
@@ -79,6 +79,8 @@ class Vector {
             }
             this->L = sqrt(length);
         }
+
+        // TODO: VECTOR CONSTRUCTOR WITH VARIADIC FUNCTION
 
 
 		// Helpers
@@ -124,10 +126,10 @@ class Vector {
         }
 
 
-        inline Scalar dot(const Vector<Type>& lhs) {
-            size_t result;
-            for (size_t i = 0; i <= this->size; i++) {
-                result += this->data[i] + lhs.data[i];
+        inline double dot(const Vector<Type>& lhs) {
+            double result{};
+            for (size_t i = 0; i < this->size; i++) {
+                result += this->data[i] * lhs.data[i];
             }
             return result;
         }
@@ -184,7 +186,7 @@ inline std::string to_string(std::vector<T> src) {
 namespace MEGA {
 
 template <typename T>
-inline std::ostream& operator<< (std::ostream& outs, Vector<T>& lhs) {
+inline std::ostream& operator<< (std::ostream& outs, const Vector<T>& lhs) {
 	std::string repr = "\n\t[ ";
     for (auto i : lhs.data) {
         repr += std::to_string(i) + ", ";
@@ -193,6 +195,15 @@ inline std::ostream& operator<< (std::ostream& outs, Vector<T>& lhs) {
 	return outs <<  repr;
 }
 
+template <typename T>
+inline std::ostream& operator<< (std::ostream& outs, Vector<T>& lhs) {
+	std::string repr = "\n\t[ ";
+    for (auto i : lhs.data) {
+        repr += std::to_string(i) + ", ";
+    }
+    repr += " ]\n";
+	return outs <<  repr;
+}
 /*  .....................................................................................
 
     Vector Arithmetic
