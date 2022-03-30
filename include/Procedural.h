@@ -5,6 +5,7 @@
 #include <Matrix.h>
 #include <Vector.h>
 #include <Types.h>
+#include <Object.h>
 
 #include <random>
 #include <functional>
@@ -138,8 +139,8 @@ class PerlinNoise {
                 std::cout << y << " -> " << ty << std::endl;
             }
 
-            //float u = smoothstep(tx);
-            //float v = smoothstep(ty);
+            //float u = fade(tx);
+            //float v = fade(ty);
 
             float u = tx;
             float v = ty;
@@ -207,7 +208,21 @@ class PerlinNoise {
         }
 };
 
+
+
+
+
 // Map generation
+class ProceduralTerrain : public Object {
+    public:
+        ProceduralTerrain() = delete;
+        ProceduralTerrain( unsigned seed, size_t width = 200, size_t length = 200, size_t resolution = 500 );   // random default values
+        ~ProceduralTerrain();
+
+        PerlinNoise* noise;
+
+    private:
+}
 
 
 }
