@@ -101,7 +101,9 @@ class Matrix {
             .....................................................................................
         */
 		Matrix( Matrix<Type>& a ) // TODO: Copy constructor from other types
-	        : data(a.data), cols(a.cols), rows(a.rows), step(a.step) {}
+	        : cols(a.cols), rows(a.rows) {
+      this->data = a.data;
+    }
 
 
 
@@ -236,8 +238,23 @@ class Matrix {
 		Matrix& operator+( Matrix& rhs );
 		Matrix& operator-( Matrix& rhs );
 
-		Matrix& operator*( Matrix& rhs );
-		Matrix& operator*( Scalar& rhs );
+    // Multiply is here for now
+    Matrix& operator*( Matrix& rhs ) {
+      std::cout << "DICKS";
+      if( this->rows != rhs.rows || this->cols != rhs.cols) {
+        std::cerr << "Attempted subtraction of matrices with different dimentions at line %d in file %s\n"
+                , __LINE__, __FILE__; 
+      } 
+      Matrix<F64C1> result(3, 3, 0.0f);
+      for( size_t i{}; i <= this->cols; i++) {
+        for( size_t f{}; f <= rhs.rows; f++) {
+          result.data[i][f] = rhs.data[i][f] * this->data[i][f];
+        }
+      }
+      return result;
+    }
+
+		//Matrix& operator*( Scalar& rhs );
 		//Matrix& operator*( Vector4& rhs );
 
 		Matrix& operator/( Matrix& rhs );
@@ -255,14 +272,28 @@ class Matrix {
             .....................................................................................
         */
         Matrix& dot( Matrix& lhs) {
+            if( this->rows != lhs.rows || this->cols != lhs.cols) {
+              std::cerr << "Attempted subtraction of matrices with different dimentions at line %d in file %s\n"
+                      , __LINE__, __FILE__; 
+            } 
             std::vector<Type> results {};
+            std::vector<Type> buffer {};
             for( size_t i = 0; i < this->cols; i++) {
-                for( size_t f = 0; f < lhs.rows; f++ ) {
-                    Type sum = this->at(i, f) + lhs.at(f, i);
-                    results.push_back(sum);
-                }
-            }
+                for( size_t e = 0; e < lhs.cols; e++) {
+                  for( size_t f = 0; f < lhs.rows; f++ ) {
+                     Type res = this->at(i, f) * lhs.at(f, e);
+                     buffer.push_back(res);
+                  }
+                  Type entry = 0;
+                  for( auto i : buffer) {
+                     entry += i;
+                  }
+                  results.push_back(entry);
+                  buffer.clear();
+                 }
+              }
             Matrix<Type> result (this->cols, lhs.rows, results);
+            std::cout << result << std::endl;        
             return result;
         }
 
@@ -272,7 +303,6 @@ class Matrix {
             Dot Product with a Column Vector
             TODO : MAKE REFERENCE
             .....................................................................................
-        */
         Matrix dot( Vector<std::vector<Type>> lhs) {
             if(this->cols != lhs.size) throw 0;
             std::vector<Type> results {};
@@ -298,6 +328,7 @@ class Matrix {
             
         }
 
+        */
 
 		// Static
 // ................................................................................................
