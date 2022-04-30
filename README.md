@@ -34,7 +34,7 @@ Matrix<F32C1> a;
 
 // Array Constructor
 F64C1 array = { 0.3, 0.8451, 0.6598745, 4.126654, 0.25486, 0.789215 };
-Matrix<F64C1> b (2, 3, array); // The size of array should not be bigger or smaller than rows*cols.
+Matrix<F64C1> b (2, 3, array); // The size of array must not be bigger or smaller than rows*cols
 
 // Fill Constructor
 Matrix<U32C1> c (5, 5, (U32C1)value); // It is recomanded to cast the value into the right type.
@@ -69,12 +69,12 @@ Specialized matrices
 ```c++
 Matrix<F64C1> a;
 
-
-a.translation( size_t tx, size_t ty, size_t tz); 
+// Translation Matric
 /*  1  0  0  tx
     0  1  0  ty
     0  0  1  tz
     0  0  0  1     */
+a.translation( size_t tx, size_t ty, size_t tz); 
 
 // Rotation Matrices
 a.rotation ( std:vector<F64C1> src );
@@ -89,18 +89,18 @@ Rx = 0  cos&  sin&      Ry =   0   1   0        Rz = -sinY  cosY  0     R = r21 
 
 
 // Scaling Matrix
+/*  sx 0  0  0
+    0  sy 0  0
+    0  0  sz 0
+    0  0  0  1    */
 a.scaling ( size_t x, size_t y, size_t z );
-/* sx 0  0  0
-   0  sy 0  0
-   0  0  sz 0
-   0  0  0  1    */
 
 // Rotation and Translation Matrix
+/*  r11  r12  r13  tx
+    r21  r22  r23  ty
+    r31  r32  r33  tz
+     0    0    0   1       */
 a.Rt( size_t x, size_t y, size_t z );
-/*       r11  r12  r13  tx
-    Rt = r21  r22  r23  ty
-         r31  r32  r33  tz
-          0    0    0   1       */
 ```
 
 
@@ -115,12 +115,14 @@ The vector follows the same types as the Matrix class.
 Vector<F32C1> a;
 
 // Array Constructor
+// The size of the array should not be bigger or smaller than rows*cols.
 F64C1 array = { 0.3, 0.8451, 0.6598745, 4.126654, 0.25486, 0.789215 };
-Vector<F64C1> b (2, 3, array); // The size of the array should not be bigger or smaller than rows*cols.
+Vector<F64C1> b (2, 3, array); 
 
 // std::vector Constructor
+// The size of the array should not be bigger or smaller than rows*cols.
 std::vector<F64C1> val { 0.3, 0.8451, 0.6598745, 4.126654, 0.25486, 0.789215 };
-Vector<F64C1> b (2, 3, val); // The size of the vector should not be bigger or smaller than rows*cols.
+Vector<F64C1> b (2, 3, val); 
 
 // Copy Constructor
 Vector<U8C1> c (b);
@@ -128,11 +130,11 @@ Vector<U8C1> c (b);
 
 Manipulate values
 ```c++
-a[ index ]                       // Use the operator[] to get item at index.
-a.push_back( item )              // Add another item into the vector. Must be of same type as the vector.
-a.push_back( std::vector<type> ) // You can also add vectors
+a[ index ]             // Use the operator[] to get item at index.
+a.push_back( item )    // Add another item into the vector. Must be of same type as the vector.
+a.push_back( std::vector<type> )   // You can also add vectors
 a.push_back( Vector<type> ) 
-a.data;                          // returns all the vector data in the expected type;
+a.data;                // returns all the vector data in the expected type;
 ```
 
 Arithmatic
@@ -162,7 +164,7 @@ using the standard matrix class.
 ```c++
 // Creating Quanternions
 Quaternion a;
-Quaternion b( 0.19701792944740668, -0.0030002730372701526, -0.9300846415537474, 0.31002821385124907);
+Quaternion b( 0.19701792944740, -0.003000273037276, -0.930084641554, 0.3100282138517);
 Quaternion c( Matrix<F64C1>& src ); // Rotation Matrix -> Quaternion
 Quaternion d( EulerAngle& src);     // Euler Angles    -> Quaternion
 ```
@@ -182,7 +184,7 @@ a.rotationY( std::vector<F64C1> src ); // rotation around the Y axis;
 a.rotationZ( std::vector<F64C1> src ); // rotation around the Z axis;
 
 // Quanternion  -> Rotation Matrix
-Quaternion quat( 0.19701792944740668, -0.0030002730372701526, -0.9300846415537474, 0.31002821385124907);
+Quaternion quat( 0.19701792944740, -0.003000273037276, -0.930084641554, 0.3100282138517);
 Matrix<F64C1> b = quat.toRotMat();  
 
 // Euler Angles -> Rotation Matrix
@@ -194,8 +196,8 @@ Arithmetic
 
 ```c++
 // Quaternions
-Quaternion a( 0.19701792944740668, -0.0030002730372701526, -0.9300846415537474, 0.31002821385124907);
-Quaternion b( 0.19701792944740668, -0.0030002730372701526, -0.9300846415537474, 0.31002821385124907);
+Quaternion a( 0.19701792944740, -0.003000273037276, -0.930084641554, 0.3100282138517);
+Quaternion b( 0.19701792944740, -0.003000273037276, -0.930084641554, 0.3100282138517);
 
 a + b;
 a - b;
@@ -222,4 +224,46 @@ EulerAngle a;
 std::cout << a << std::endl;   // display the angles in a readable format in the console.
 ```
 
+
+&nbsp;
+
+#### Object
+
+All of the game meshes are derived from the parent Object class.
+
+```c++
+class Object {
+
+	protected:
+		Model Model;
+		Material Material;
+		Matrix<F32C1> t;
+	    Quaternion Direction;
+
+	public:
+		virtual Object();                      // Default Constructor
+		virtual Object( const Object& obj );   // Copy constructor
+		virtual Object( Model model, Material material, Vector& coordinates);   // Create new object
+		virtual ~Object();                     // Destructor
+
+		virtual void render();
+		virtual void move(Matrix& Rt);
+		virtual void setStatic( bool set) const;
+
+        // OpenGL functions
+        void Draw( Shader &shader );
+
+		bool changedSinceLastFrame = false;    // only objects that have changed will be re-rendered for the next frame
+		mutable bool Static = false;           // only non-static objects will be rendered every frame
+
+	private:
+
+        // OpenGL functions
+        unsigned int VAO, VBO, EBO;
+        void setupMesh();
+
+		const uint16_t world_id;
+		static uint32_t next_id;
+};
+```
 
