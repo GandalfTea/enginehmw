@@ -38,10 +38,34 @@ Quaternion::Quaternion( Matrix<F64C1> src ) {
   //assert( src.t() * src == Matrix<F32C1>.eye(4); 
   //assert( src.det = 1 );
 
-  s  = sqrt( 1.0f + src.at(0, 0) + src.at(1, 1) + src.at(2, 2) ) / 2;
-  v1 = ( src.at(2, 1) - src.at(1, 2) ) / 4*s;
-  v2 = ( src.at(0, 2) - src.at(2, 0) ) / 4*s;
-  v3 = ( src.at(1, 0) - src.at(0, 1) ) / 4*s;
+  // TODO: Check for division by zero, sqrt of negative num and de-orthogonalised matrix
+  float trace = src.at(0, 0) + src.at(1, 1) + src.at(2, 2);
+
+  if(trace > 0) {
+    float S  = sqrt( 1.0f + trace) * 2;
+    s = 0.25 *S;
+    v1 = ( src.at(2, 1) - src.at(1, 2) ) / S;
+    v2 = ( src.at(0, 2) - src.at(2, 0) ) / S;
+    v3 = ( src.at(1, 0) - src.at(0, 1) ) / S;
+  } else if( (src.at(0, 0) > src.at(1, 1)) & (src.at(0, 0) > src.at(2, 2))) {
+    float S = sqrt(1.0 + src.at(0, 0) - src.at(1, 1) - src.at(2, 2)) * 2;
+    s = ( src.at(2, 1) - src.at(1, 2) ) / S;
+    v1 = 0.25 *S;
+    v2 = ( src.at(0, 1) - src.at(1, 0) ) / S;
+    v3 = ( src.at(0, 2) - src.at(2, 0) ) / S;
+  } else if( src.at(1, 1) > src.at(2, 2)) {
+    float S = sqrt(1.0 + src.at(1, 1) - src.at(0, 0) - src.at(2, 2)) * 2;
+    s = ( src.at(0, 2) - src.at(2, 0) ) / S;
+    v1 = ( src.at(0, 1) - src.at(1, 0) ) / S;
+    v2 = 0.25 *S;
+    v3 = ( src.at(1, 2) - src.at(2, 1) ) / S;
+  } else {
+    float S = sqrt(1.0 + src.at(2, 2) - src.at(0, 0) - src.at(1, 1)) * 2;
+    s = ( src.at(1, 0) - src.at(0, 1) ) / S;
+    v1 = ( src.at(0, 2) - src.at(2, 0) ) / S;
+    v2 = ( src.at(1, 2) - src.at(2, 1) ) / S;
+    v3 = 0.25 *S;
+  }
   m = sqrt( pow(s, 2) + pow(v1, 2) + pow(v2, 2) + pow(v3, 2) );
 }
 
@@ -93,22 +117,22 @@ EulerAngle::EulerAngle( Quaternion src ) {
 
 // Rotation Matrix -> Euler Angles
 EulerAngle::EulerAngle( Matrix<F64C1> src ) {
-  if( src.at(3, 1) != 1 || src.at(3, 1) != -1) {
-    theta = -asin(src.at(3,1));
+  if( src.at(2, 0) != 1 || src.at(2, 0) != -1) {
+    theta = -asin(src.at(2,0));
     //theta2 = M_PI - theta;
-    phi  = atan2( src.at(3, 2) / cos(theta),  src.at(3, 3) / cos(theta));
+    phi  = atan2( src.at(2, 1) / cos(theta),  src.at(2, 2) / cos(theta));
     //phi2 = atan2( src.at(3, 2) / cos(theta2), src.at(3, 3) / cos(theta2));
-    psi  = atan2( src.at(2, 1) / cos(theta),  src.at(1, 1) / cos(theta));
+    psi  = atan2( src.at(1, 0) / cos(theta),  src.at(1, 0) / cos(theta));
     //psi2 = atan2( arc.at(2, 1) / cos(theta2), src.at(1, 1) / cos(theta2));
 
   } else {
     psi = 0;
-    if( src.at(3, 1) == -1) {
+    if( src.at(2, 0) == -1) {
       theta = M_PI / 2;
-      phi = psi + atan2( src.at(1, 2), src.at(1, 3) );
+      phi = psi + atan2( src.at(0, 1), src.at(0, 2) );
     } else {
       theta = -M_PI / 2;
-      phi = -psi + atan2( -src.at(1, 2), -src.at(1, 3) );
+      phi = -psi + atan2( -src.at(0, 1), -src.at(0, 2) );
     }
   }
 }

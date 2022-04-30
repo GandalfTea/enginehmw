@@ -101,8 +101,10 @@ class Matrix {
             .....................................................................................
         */
 		Matrix( Matrix<Type>& a ) // TODO: Copy constructor from other types
-	        : cols(a.cols), rows(a.rows) {
+	  {
       this->data = a.data;
+      this->cols = a.cols;
+      this->rows = a.rows;
     }
 
 
@@ -271,7 +273,7 @@ class Matrix {
             TODO : MAKE REFERENCE
             .....................................................................................
         */
-        Matrix& dot( Matrix& lhs) {
+        Matrix dot( Matrix& lhs) {
             if( this->rows != lhs.rows || this->cols != lhs.cols) {
               std::cerr << "Attempted subtraction of matrices with different dimentions at line %d in file %s\n"
                       , __LINE__, __FILE__; 
@@ -293,7 +295,6 @@ class Matrix {
                  }
               }
             Matrix<Type> result (this->cols, lhs.rows, results);
-            std::cout << result << std::endl;        
             return result;
         }
 
