@@ -24,9 +24,14 @@ Model loadModel( const char* path ) {
     std::vector<U32C1> face_buffer{};
 
     std::string type;
-    while( load_model>>type) {
+    while( load_model>>type ) {
 
         switch( *type.c_str() ) {
+            case '#': {
+                // skip comments
+                std::getline(load_model, type);
+                continue;
+            }
             case 'v': {
                 float x{}, y{}, z{};
                 load_model >> x >> y >> z;
@@ -39,7 +44,7 @@ Model loadModel( const char* path ) {
                 face_buffer.insert( face_buffer.end(), { a, b, c });
                 break;
             }
-            case "vt": {
+        /*    case "vt": {
                 // texture 
             }
             case "vn": {
@@ -47,7 +52,7 @@ Model loadModel( const char* path ) {
             }
             case 'l': {
                 // line
-            }   
+            }*/   
         }
     }
 

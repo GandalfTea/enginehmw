@@ -3,9 +3,11 @@
 #include <Object.h>
 #include <iostream>
 #include <cassert>
+#include <chrono>
 #include "./helpers.cc"
 
 using namespace std;
+using namespace std::chrono;
 using namespace MEGA;
 
 
@@ -44,7 +46,18 @@ int main() {
     assert( a.triangles.at(2, 1) == 2877);
     assert( a.triangles.at(2, 2) == 2921);
 
-    std::cout << " Pass" << std::endl << std::endl;
+    std::cout << " Pass" << std::endl;
+
+    // TODO: Load big boi model
+
+    std::cout << "Testing .obj big model loader. 8.5 million vertices in ";
+    auto start = high_resolution_clock::now();
+
+    Model b = loadModel("../models/demo/bow.obj");
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << duration.count() << " ms" << endl << std::endl;
 
     return 0;
 }
