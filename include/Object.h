@@ -1,7 +1,8 @@
 
-#include "Types.h"
-#include "Vector.h"
-#include "Matrix.h";
+#include <Types.h>
+#include <Vector.h>
+#include <Matrix.h>
+#include <Coordinates.h>
 
 #ifndef OBJECT_BASE_CLASS
 #define OBJECT_BASE_CLASS
@@ -13,18 +14,39 @@ namespace MEGA
 // keep vertex under 20 bytes
 // The vertex structure needs to be sequential. The struct format has this property
 struct Vertex {
-    Vector<F32C1> position;	
-	Vector<F32C1> normal;
-	Vector<F32C1> texture_coords;
-	uint8_t specular = 0; 								// 0 - 255
-	uint32_t ID{};
+    //Vector<F32C1> position;	
+    float position[3];
+	//Vector<F32C1> normal;
+	//Vector<F32C1> texture_coords;
+	//uint8_t specular = 0; 								// 0 - 255
+	//uint32_t ID{};
+};
+
+struct Triangle {
+    float vertex_normals[3][3];
+    float s[3], t[3];
+    int vertex_idx[3];
+    // maybe store a pointer instead of index
+};
+
+struct Mesh {
+    int material_index;
+    int num_triangles;
+    int* triangle_indices;
+};
+
+struct Material {
+    float ambient[4], diffuse[4], specular[4], emissive[4];
+    float shininess;
+    uint16_t texture;
+    char* path;
 };
 
 struct Model {
     Matrix<F32C1> vertices;
+    Matrix<U32C1> triangles;
     Matrix<F32C1> normals;
-	Matrix<U16C1> verticesIDs{};
-	Matrix<U16C1> normalsIDs{};
+    std::vector<Mesh> meshes;
 };
 
 
@@ -32,23 +54,23 @@ struct Model {
 class Object {
 
 	protected:
-		Model Model;
-		Material Material;
-		Vector<F32C1> Coordinates;
-		//EulerAngles Direction;
+		Model model;
+		Material material;
+		Vector<F32C1> coords;
+		Quaternion direction;
 
 	public:
-		virtual Object();
-		virtual Object( const Object& obj );
-		virtual Object( Model model, Material material, Vector& coordinates);
-		virtual ~Object();
+		Object();
+		Object( const Object& obj );
+		Object( Model model, Material material, Vector<F32C1>& coordinates);
+		~Object();
 
 		virtual void render();
-		virtual void move(Matrix& Rt);
+		virtual void move(Matrix<F64C1>& Rt);
 		virtual void setStatic( bool set) const;
 
         // OpenGL functions
-        void Draw( Shader &shader );
+        void Draw();
 
 		bool changedSinceLastFrame = false;
 		mutable bool Static = false;

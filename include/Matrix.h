@@ -189,12 +189,13 @@ class Matrix {
 
         /*
             Get specific element at (col, row) in the matrix.
+            TODO : This is inverted from the usual
             .....................................................................................
         */
-		Type at( size_t col, size_t row ) const {
+		Type at( size_t row, size_t col ) const {
             if(col < 0 || row < 0) throw MatrixException(EXTRACT_NEGATIVE_INDEX);
             if(col > this->cols || row > this->rows) throw MatrixException(EXTRACT_INDEX_TOO_BIG);
-            return this->data[col][row];
+            return this->data[row][col];
         }
 
         /*
@@ -232,11 +233,25 @@ class Matrix {
             this->data[col][row] = value;
         }
 
+        /*
+            Print the two sizes of the matrix
+            .....................................................................................
+        */
+        std::string size() {
+            std::string ret;
+            ret += "[ " + std::to_string(this->cols) + ", " + std::to_string(this->rows) + " ]";
+            return ret;
+        }
+
 	
 		// Arithmatic
 // ................................................................................................
 
-		Matrix& operator=( const Matrix& src );
+		void operator=( const Matrix& src ) {
+            this->data = src.data;
+            this->cols = src.cols;
+            this->rows = src.rows;
+        };
 		Matrix& operator+( Matrix& rhs );
 		Matrix& operator-( Matrix& rhs );
 
