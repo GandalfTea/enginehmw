@@ -192,9 +192,9 @@ class Matrix {
             TODO : This is inverted from the usual
             .....................................................................................
         */
-		Type at( size_t row, size_t col ) const {
+		Type& at( size_t row, size_t col ) {
             if(col < 0 || row < 0) throw MatrixException(EXTRACT_NEGATIVE_INDEX);
-            if(col > this->cols || row > this->rows) throw MatrixException(EXTRACT_INDEX_TOO_BIG);
+            //if(col > this->cols || row > this->rows) throw MatrixException(EXTRACT_INDEX_TOO_BIG);
             return this->data[row][col];
         }
 
@@ -255,21 +255,22 @@ class Matrix {
 		Matrix& operator+( Matrix& rhs );
 		Matrix& operator-( Matrix& rhs );
 
-    // Multiply is here for now
-    Matrix& operator*( Matrix& rhs ) {
-      std::cout << "DICKS";
-      if( this->rows != rhs.rows || this->cols != rhs.cols) {
-        std::cerr << "Attempted subtraction of matrices with different dimentions at line %d in file %s\n"
-                , __LINE__, __FILE__; 
-      } 
-      Matrix<F64C1> result(3, 3, 0.0f);
-      for( size_t i{}; i <= this->cols; i++) {
-        for( size_t f{}; f <= rhs.rows; f++) {
-          result.data[i][f] = rhs.data[i][f] * this->data[i][f];
+
+        // Multiply is here for now
+        Matrix& operator*( Matrix& rhs ) {
+          std::cout << "DICKS";
+          if( this->rows != rhs.rows || this->cols != rhs.cols) {
+            std::cerr << "Attempted subtraction of matrices with different dimentions at line %d in file %s\n"
+                    , __LINE__, __FILE__; 
+          } 
+          Matrix<F64C1> result(3, 3, 0.0f);
+          for( size_t i{}; i <= this->cols; i++) {
+            for( size_t f{}; f <= rhs.rows; f++) {
+              result.data[i][f] = rhs.data[i][f] * this->data[i][f];
+            }
+          }
+          return result;
         }
-      }
-      return result;
-    }
 
 		//Matrix& operator*( Scalar& rhs );
 		//Matrix& operator*( Vector4& rhs );
@@ -588,6 +589,7 @@ inline std::ostream& operator<< (std::ostream& outs, Matrix<T>& mat) {
     }
 	return outs <<  repr;
 }
+
 
 
 } // namespace

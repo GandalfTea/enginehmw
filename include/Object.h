@@ -47,6 +47,8 @@ struct Model {
     Matrix<U32C1> triangles;
     Matrix<F32C1> normals;
     std::vector<Mesh> meshes;
+    uint64_t vertnum;
+    uint64_t polynum;
 };
 
 
@@ -62,7 +64,7 @@ class Object {
 	public:
 		Object();
 		Object( const Object& obj );
-		Object( Model model, Material material, Vector<F32C1>& coordinates);
+		Object( Model model, Material material, Vector<F32C1>& coordinates, Quaternion direction);
 		~Object();
 
 		virtual void render();
@@ -84,6 +86,8 @@ class Object {
 		const uint16_t world_id;
 		static uint32_t next_id;
 };
+
+
 
 }
 #endif
