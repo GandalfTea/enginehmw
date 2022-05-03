@@ -43,8 +43,8 @@ struct Material {
 };
 
 struct Model {
-    Matrix<F32C1> vertices;
-    Matrix<U32C1> triangles;
+    std::vector<Vertex> vertices;
+    std::vector<uint32_t> triangles;
     Matrix<F32C1> normals;
     std::vector<Mesh> meshes;
     uint64_t vertnum;
