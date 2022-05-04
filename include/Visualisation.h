@@ -102,7 +102,7 @@ void viewModel__display_func() {
 
     glBegin(GL_POINTS);
 
-    glColor3f(0.0f, 1.0f, 0.0f);
+    glColor3f(0.0f, 1.0f, 1.0f);
     for( auto i : model->vertices ) {
        glVertex3f( i.position[0], i.position[1], i.position[2]);
     }
@@ -163,7 +163,7 @@ void reshape(GLsizei width, GLsizei height) {
    glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();          
-   gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+   gluPerspective(45.0f, aspect, 0.1f, 1000.0f);
 }
 
 void viewModel( Model mesh , int argc, char** argv ) {

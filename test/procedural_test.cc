@@ -1,8 +1,12 @@
 
 #include <Procedural.h>
+#include <Visualisation.h>
 
-int main() {
+using namespace MEGA;
 
+int main(int argc, char** argv) {
+
+/*
     try {
         MEGA::PerlinNoise a;
         double result = a.eval(2.2456874, 1.5489);
@@ -16,6 +20,9 @@ int main() {
         }
     } catch( int Error ) {
         std::cout << Error << std::endl;
-    }
+    }           */
+    ProceduralTerrain a( 202254654987, 2, 2, 300);
+    viewModel(a.terrain, argc, argv);
+
     return 0;
 }

@@ -6,6 +6,7 @@
 #include <Vector.h>
 #include <Types.h>
 #include <Object.h>
+#include <GeometricPrimitives.h>
 
 #include <random>
 #include <functional>
@@ -213,16 +214,44 @@ class PerlinNoise {
 
 
 // Map generation
-class ProceduralTerrain : public Object {
+// TODO: Derrive from main Object Class after testing
+class ProceduralTerrain {
+
+    public:
+        Model terrain;
+
     public:
         ProceduralTerrain() = delete;
-        ProceduralTerrain( unsigned seed, size_t width = 200, size_t length = 200, size_t resolution = 500 );   // random default values
-        ~ProceduralTerrain();
+        ~ProceduralTerrain() {}
 
-        PerlinNoise* noise;
+        ProceduralTerrain( unsigned seed, size_t width = 1, size_t length = 1, size_t resolution = 40 ) {
+
+            // create poly mesh
+            terrain = Plane(width, length, resolution, resolution);
+            noise = new PerlinNoise(seed);
+
+            // create height map
+            for(size_t i{}; i <= resolution; i++) {
+                for(size_t j{}; j <= resolution; j++) {
+                    float x = i / (double)resolution-1;  
+                    float y = j / (double)resolution-1;  
+                    heightmap.push_back(noise->eval(x, y));
+                }
+            }
+
+            // apply height map     
+            for(size_t i{}; i < terrain.vertices.size(); i++) {
+                terrain.vertices[i].position[1] = heightmap[i];
+                std::cout << terrain.vertices[i].position[1] << std::endl;
+            }
+
+        }
+
 
     private:
-}
+        PerlinNoise* noise;
+        std::vector<double> heightmap;
+};
 
 
 }
