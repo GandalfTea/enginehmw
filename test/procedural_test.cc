@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
     } catch( int Error ) {
         std::cout << Error << std::endl;
     }           */
-    ProceduralTerrain a( 20225465498, 2, 2, 200);
+    ProceduralTerrain a( 20225465498, 2, 2, 200, 50);
     viewModel(a.terrain, argc, argv);
 
     return 0;

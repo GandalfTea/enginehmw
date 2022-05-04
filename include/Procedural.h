@@ -21,6 +21,10 @@ inline T lerp ( const T& a, const T& b, const T& t) {
     return a * ( 1 - t ) + b * t;     
 }
 
+inline float smoothstep( const float& t) {
+    return t * t * (3 - 2 * t);
+}
+
 
 // Fade Function
 // TODO
@@ -147,9 +151,9 @@ class PerlinNoise {
             //float v = fade(ty);
 
             // TODO: Smoothstep
-            float u = tx;
-            float v = ty;
-            float w = tz;
+            float u = smoothstep(tx);
+            float v = smoothstep(ty);
+            float w = smoothstep(tz);
 
             const Vector<F32C1>& c000 = this->gradients[hash(x0, y0, z0)];
             const Vector<F32C1>& c100 = this->gradients[hash(x1, y0, z0)];
@@ -256,7 +260,7 @@ class ProceduralTerrain {
         ProceduralTerrain() = delete;
         ~ProceduralTerrain() {}
 
-        ProceduralTerrain( unsigned seed, size_t width = 1, size_t length = 1, size_t resolution = 40 ) {
+        ProceduralTerrain( unsigned seed, size_t width = 1, size_t length = 1, size_t resolution = 40, float smoothness = 50.0f ) {
 
             // create poly mesh
             terrain = Plane(width, length, resolution, resolution);
@@ -265,8 +269,8 @@ class ProceduralTerrain {
             // create height map
             for(size_t i{}; i <= resolution; ++i) {
                 for(size_t j{}; j <= resolution; ++j) {
-                    float x = i * 1/25.f; 
-                    float y = j * 1/25.f; 
+                    float x = i * 1/ smoothness; 
+                    float y = j * 1/ smoothness; 
                     heightmap.push_back( (noise->eval(x, y, 0)+1) * 0.5);
                 }
             }

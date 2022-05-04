@@ -6,6 +6,10 @@ Optimised for ~ 10 million vertices, ~25MB.
 
 &nbsp;
 
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/58654842/166713462-9910a237-a875-4cfe-911d-b65ee3b81af5.gif)
+
+
 ### TODO:
 * Perlin noise random terrain generation
 * First person player movement
