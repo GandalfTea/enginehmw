@@ -32,6 +32,7 @@ Model Plane( uint32_t width  = 1,
         }
     }
     ret.vertices = vertices_buffer;
+    ret.vertnum = ret.vertices.size();
 
     std::vector<uint32_t> quads_buffer;
     for(size_t j = 0; j < stepH; ++j) {

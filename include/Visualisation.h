@@ -97,7 +97,7 @@ void viewModel__display_func() {
     float rotcam_x = sin(duration.count()*rotation_speed) * radius;
     float rotcam_y = cos(duration.count()*rotation_speed) * radius;
 
-    std::cout << rotcam_x << " " << rotcam_y << std::endl;
+    //std::cout << rotcam_x << " " << rotcam_y << std::endl;
     gluLookAt(rotcam_x, 0.9, rotcam_y, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
     glBegin(GL_POINTS);
