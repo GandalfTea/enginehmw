@@ -107,11 +107,10 @@ void viewModel__display_func() {
     }
     glEnd();
 
-/*
     glBegin(GL_QUADS);                
 
         glColor3f(0.6f, 0.6f, 0.6f);
-        for( size_t i = 0; i < model->triangles.size()/4; i += 3) {
+        for( size_t i = 0; i < model->triangles.size(); i += 4) {
             float x [3];
             float y [3];
             float z [3]; 
@@ -131,6 +130,7 @@ void viewModel__display_func() {
             w[0] = model->vertices[ model->triangles[i + 3]].position[0];
             w[1] = model->vertices[ model->triangles[i + 3]].position[1];
             w[2] = model->vertices[ model->triangles[i + 3]].position[2];
+/*
             std::cout << "X : ";
             for( auto i : x ) { std::cout << i << " ";}
             std::cout << std::endl;
@@ -145,13 +145,13 @@ void viewModel__display_func() {
             std::cout << std::endl;
             std::cout << std::endl;
             std::cout << model->triangles.size()/4 << std::endl;
+*/
             glVertex3f( x[0], x[1], x[2]);
             glVertex3f( y[0], y[1], y[2]);
             glVertex3f( z[0], z[1], z[2]);
             glVertex3f( w[0], w[1], w[2]);
         }
     glEnd();
-*/
     glutSwapBuffers();
 }
 
