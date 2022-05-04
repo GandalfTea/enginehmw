@@ -7,18 +7,38 @@ Optimised for ~ 10 million vertices, ~25MB.
 &nbsp;
 
 
+
 ![ezgif com-gif-maker](https://user-images.githubusercontent.com/58654842/166713462-9910a237-a875-4cfe-911d-b65ee3b81af5.gif)
 
 
-### TODO:
+### Features
 * Perlin noise random terrain generation
+
+&nbsp;
+
+
+### Dependencies
+* OpenGL
+* GLUT
+
+&nbsp;
+
+### TODO:
 * First person player movement
 * Object Collision
 * Gun with bullets that follow the cursor?
 
 &nbsp;
 
+
+
 ### Docs
+
+
+
+&nbsp;
+
+### Low Level Objects
 
 &nbsp;
 
