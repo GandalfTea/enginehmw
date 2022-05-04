@@ -2,7 +2,6 @@
 #ifndef MEGA_VISUALISATION_CORE
 #define MEGA_VISUALISATION_CORE
 
-#include <GLFW/glfw3.h>
 #include <GL/glut.h>
 #include <chrono> // for spinning around object
 
