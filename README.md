@@ -1,7 +1,7 @@
 &nbsp;
 
 ### About
-Barely runnable game engine made for MEGA.      
+Barely runnable game engine made for MEGA.
 Optimised for ~ 10 million vertices, ~25MB.
 
 &nbsp;
@@ -44,7 +44,7 @@ Optimised for ~ 10 million vertices, ~25MB.
 
 #### Matrix
 
-Matrix types follow the format: 
+Matrix types follow the format:
 ```
 TYPE (U)nsigned (S)igned (F)loat) + DEPTH (8, 16, 32, 64) + CHANNELS (1, 2, 3)
 
@@ -85,7 +85,7 @@ Helpers
 a.cols;      // returns the number of columns in a
 a.rows;      // returns the number of rows in a
 a.det();     //returns the determinant
-a.inverse(); // returns the inverse of matrix a 
+a.inverse(); // returns the inverse of matrix a
 std::cout << a << std::endl;    // prints the matrix to the console in a readable format
 ```
 
@@ -98,7 +98,7 @@ Matrix<F64C1> a;
     0  1  0  ty
     0  0  1  tz
     0  0  0  1     */
-a.translation( size_t tx, size_t ty, size_t tz); 
+a.translation( size_t tx, size_t ty, size_t tz);
 
 // Rotation Matrices
 a.rotation ( std:vector<F64C1> src );
@@ -107,8 +107,8 @@ a.rotationY ( double angle );
 a.rotationZ ( double angle );
 
 
-/*   1    0    0             cosB  0 -sinB            cosY  sinY  0         r11  r12  r13 
-Rx = 0  cos&  sin&      Ry =   0   1   0        Rz = -sinY  cosY  0     R = r21  r22  r23 
+/*   1    0    0             cosB  0 -sinB            cosY  sinY  0         r11  r12  r13
+Rx = 0  cos&  sin&      Ry =   0   1   0        Rz = -sinY  cosY  0     R = r21  r22  r23
      0 -sin&  cos&           sinB  0  cosB             0     0    1         r31  r32  r33    */
 
 
@@ -141,12 +141,12 @@ Vector<F32C1> a;
 // Array Constructor
 // The size of the array should not be bigger or smaller than rows*cols.
 F64C1 array = { 0.3, 0.8451, 0.6598745, 4.126654, 0.25486, 0.789215 };
-Vector<F64C1> b (2, 3, array); 
+Vector<F64C1> b (2, 3, array);
 
 // std::vector Constructor
 // The size of the array should not be bigger or smaller than rows*cols.
 std::vector<F64C1> val { 0.3, 0.8451, 0.6598745, 4.126654, 0.25486, 0.789215 };
-Vector<F64C1> b (2, 3, val); 
+Vector<F64C1> b (2, 3, val);
 
 // Copy Constructor
 Vector<U8C1> c (b);
@@ -157,7 +157,7 @@ Manipulate values
 a[ index ]             // Use the operator[] to get item at index.
 a.push_back( item )    // Add another item into the vector. Must be of same type as the vector.
 a.push_back( std::vector<type> )   // You can also add vectors
-a.push_back( Vector<type> ) 
+a.push_back( Vector<type> )
 a.data;                // returns all the vector data in the expected type;
 ```
 
@@ -181,8 +181,8 @@ std::cout << a << std::endl;    // prints the matrix to the console in a readabl
 
 #### Coordinates
 
-We make use of Quaternions, Euler Angles and Rotation Matrices.    
-Quaternions and Euler Angles have their own classes, while Rotation matrices can easily be formed   
+We make use of Quaternions, Euler Angles and Rotation Matrices.
+Quaternions and Euler Angles have their own classes, while Rotation matrices can easily be formed
 using the standard matrix class.
 
 ```c++
@@ -209,14 +209,14 @@ a.rotationZ( std::vector<F64C1> src ); // rotation around the Z axis;
 
 // Quanternion  -> Rotation Matrix
 Quaternion quat( 0.19701792944740, -0.003000273037276, -0.930084641554, 0.3100282138517);
-Matrix<F64C1> b = quat.toRotMat();  
+Matrix<F64C1> b = quat.toRotMat();
 
 // Euler Angles -> Rotation Matrix
 EulerAngle eul( 0.13762212611904287, 0.3732315081176748, -2.472067119945251 );
-Matrix<F64C1> c = eul.toRotMat();    
+Matrix<F64C1> c = eul.toRotMat();
 ```
 
-Arithmetic 
+Arithmetic
 
 ```c++
 // Quaternions
@@ -230,8 +230,8 @@ a / b;
 
 Quaternion.innerProduct( a, b );
 ```
-Euler Angles don't have arithmatic functions.     
-Rotation Matrices inherit all the arithmatic operations from the Matrix class.    
+Euler Angles don't have arithmatic functions.
+Rotation Matrices inherit all the arithmatic operations from the Matrix class.
 
 Helpers
 
@@ -290,4 +290,3 @@ class Object {
 		static uint32_t next_id;
 };
 ```
-
