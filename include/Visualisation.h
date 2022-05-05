@@ -15,6 +15,20 @@ namespace MEGA {
 
 */
 
+// For now this works
+#define SHOW_VERTICES
+//#define SHOW_NORMALS
+//#define SHOW_QUADS
+
+// TODO: Implement Options for display
+enum {
+    MEGA_VERTICES,
+    MEGA_NO_QUADS,
+    MEGA_NORMALS,
+    MEGA_SPARSE_NORMALS
+} DisplayOptions;
+
+
 void InitGL() {
    glClearColor(0.2f, 0.2f, 0.2f, 1.0f); 
    glClearDepth(1.0f);                 
@@ -99,17 +113,42 @@ void viewModel__display_func() {
     //std::cout << rotcam_x << " " << rotcam_y << std::endl;
     gluLookAt(rotcam_x, 0.9, rotcam_y, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
+#ifdef SHOW_VERTICES
+    // DRAW VERTICES
     glBegin(GL_POINTS);
-
     glColor3f(0.0f, 1.0f, 1.0f);
     for( auto i : model->vertices ) {
        glVertex3f( i.position[0], i.position[1], i.position[2]);
     }
     glEnd();
+#endif
 
+#ifdef SHOW_NORMALS
+    // DRAW NORMALS
+    glColor3f(1.0f, 0.5f, 0.2f);
+    glBegin(GL_LINES);
+    glLineWidth(0.001);
+        size_t k = 0;
+            for( size_t i{}; i < model->vertices.size(); i++ ) {
+            float x = model->normals[i].x;
+            float y = model->normals[i].y;
+            float z = model->normals[i].z;
+            float oX = model->vertices[i].position[0];
+            float oY = model->vertices[i].position[1];
+            float oZ = model->vertices[i].position[2];
+            //if(i%4==0) k++;
+
+            glVertex3f(oX+(x/15), oY+(y/15), oZ+(z/15));
+            glVertex3f(oX, oY, oZ);
+        }
+    glEnd();
+#endif
+
+#ifdef SHOW_QUADS
+    // DRAW QUADS
     glBegin(GL_QUADS);                
 
-        glColor3f(0.6f, 0.6f, 0.6f);
+        glColor3f(0.4f, 0.4f, 0.4f);
         for( size_t i = 0; i < model->triangles.size(); i += 4) {
             float x [3];
             float y [3];
@@ -152,9 +191,9 @@ void viewModel__display_func() {
             glVertex3f( w[0], w[1], w[2]);
         }
     glEnd();
+#endif
     glutSwapBuffers();
 }
-
 
 void reshape(GLsizei width, GLsizei height) {
    if (height == 0) height = 1;  

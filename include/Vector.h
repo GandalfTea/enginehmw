@@ -43,12 +43,36 @@ class Vector {
 
         /*  .....................................................................................
 
-	        Default Constructor
+	        Default Constructors
             .....................................................................................
         */
         Vector() 
             : size(-1)
         {}
+
+        Vector( Type a, Type b ) {
+            this->data.push_back(a);
+            this->data.push_back(b);
+            this->size = this->data.size();
+            this->L = sqrt( a*a + b*b );
+        }
+
+        Vector( Type a, Type b, Type c ) {
+            this->data.push_back(a);
+            this->data.push_back(b);
+            this->data.push_back(c);
+            this->size = this->data.size();
+            this->L = sqrt( a*a + b*b + c*c );
+        }
+
+        Vector( Type a, Type b, Type c, Type d ) {
+            this->data.push_back(a);
+            this->data.push_back(b);
+            this->data.push_back(c);
+            this->data.push_back(d);
+            this->size = this->data.size();
+            this->L = sqrt( a*a + b*b + c*c + d*d );
+        }
 
 
 
@@ -119,10 +143,32 @@ class Vector {
             return this->data[idx];
         }
 
+        void normalize() {
+            for( auto i : data) {
+                i /= L;
+            }
+        }
+
 		// Arithmetic 
 // ................................................................................................
-        inline bool operator!= (const Vector<Type>& lhs) {
-            return this->data != lhs.data;
+        inline bool operator!= (const Vector<Type>& rhs) {
+            return this->data != rhs.data;
+        }
+
+        inline Vector<Type> operator- (const Vector<Type> rhs) {
+            if( this->size != rhs.size || this->size != 3 ) std::cout << "Wrong size of vector" << std::endl; // raise exception
+            Vector<Type> ret;
+            for( size_t i{}; i < size; i++) {
+                ret.data.push_back( this->data[i] - rhs.data[i]); 
+            }
+        }
+
+        inline Vector<Type> operator% (const Vector<Type>& rhs) {
+            if( this->size != rhs.size || this->size != 3 ) std::cout << "Wrong size of vector" << std::endl; // raise exception
+            float x = this->data[1] * rhs.data[2] - this->data[2]*rhs.data[1];
+            float y = this->data[2] * rhs.data[0] - this->data[0]*rhs.data[2];
+            float z = this->data[0] * rhs.data[1] - this->data[1]*rhs.data[0];
+            return Vector<Type>(x, y, z);
         }
 
 

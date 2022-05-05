@@ -42,10 +42,17 @@ struct Material {
     char* path;
 };
 
+// TODO: THIS IS NOT NEEDED, IT JUST IMPROVES PERFORMANCE
+struct Normal {
+    float x;
+    float y;
+    float z;
+};
+
 struct Model {
     std::vector<Vertex> vertices;
     std::vector<uint32_t> triangles;
-    Matrix<F32C1> normals;
+    std::vector<Normal> normals;
     std::vector<Mesh> meshes;
     uint64_t vertnum;
     uint64_t polynum;

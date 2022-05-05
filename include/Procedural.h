@@ -260,18 +260,33 @@ class ProceduralTerrain {
         ProceduralTerrain() = delete;
         ~ProceduralTerrain() {}
 
-        ProceduralTerrain( unsigned seed, size_t width = 1, size_t length = 1, size_t resolution = 40, float smoothness = 50.0f ) {
+        ProceduralTerrain( unsigned seed, size_t width = 1, size_t length = 1, size_t resolution = 40, float smoothness = 50.0f, bool spicy = false ) {
 
             // create poly mesh
             terrain = Plane(width, length, resolution, resolution);
             noise = new PerlinNoise(seed);
 
             // create height map
+            size_t layers = 5;
+            float max_value = 0;
             for(size_t i{}; i <= resolution; ++i) {
                 for(size_t j{}; j <= resolution; ++j) {
+                    float fractal = 0;
+                    float amplitude = 1;
                     float x = i * 1/ smoothness; 
                     float y = j * 1/ smoothness; 
-                    heightmap.push_back( (noise->eval(x, y, 0)+1) * 0.5);
+                    if( spicy ) {
+                        for( size_t k{}; k < layers; ++k ) {
+                            fractal += (1 + noise->eval(x, y, 0)) * 0.3 * amplitude;
+                            x *= 2;
+                            y*= 2;
+                            amplitude *= 0.5;
+                        }
+                        if( fractal > max_value) max_value = fractal;
+                        heightmap.push_back(fractal);
+                    } else {
+                        heightmap.push_back( (noise->eval(x, y, 0)+1) * 0.5);
+                    }
                 }
             }
 
@@ -280,8 +295,37 @@ class ProceduralTerrain {
                 terrain.vertices[i].position[1] = heightmap[i];
             }
 
-        }
+            // Recompute normals
+            terrain.normals.clear();
+            for( size_t i{}; i < terrain.triangles.size(); i += 4) {
+                Vertex V1 = terrain.vertices[ terrain.triangles[i] ];
+                Vertex V2 = terrain.vertices[ terrain.triangles[i+1] ];
+                Vertex V3 = terrain.vertices[ terrain.triangles[i+2] ];
+                Vertex V4 = terrain.vertices[ terrain.triangles[i+3] ];
 
+                //Normal normal = { computeNormal( V1.position[0], V1.position[1], V1.position[2],
+                //                                  V2.position[0], V2.position[1], V2.position[2],
+                //                                  V3.position[0], V3.position[1], V3.position[2],
+                //                                  V4.position[0], V4.position[1], V4.position[2])};
+                
+                terrain.normals.push_back( computeNormal(V4.position[0], V4.position[1], V4.position[2],
+                                                         V1.position[0], V1.position[1], V1.position[2],
+                                                         V2.position[0], V2.position[1], V2.position[2]));
+
+                terrain.normals.push_back( computeNormal(V1.position[0], V1.position[1], V1.position[2],
+                                                         V2.position[0], V2.position[1], V2.position[2],
+                                                         V3.position[0], V3.position[1], V3.position[2]));
+
+                terrain.normals.push_back( computeNormal(V2.position[0], V2.position[1], V2.position[2],
+                                                         V3.position[0], V3.position[1], V3.position[2],
+                                                         V4.position[0], V4.position[1], V4.position[2]));
+
+                terrain.normals.push_back( computeNormal(V3.position[0], V3.position[1], V3.position[2],
+                                                         V4.position[0], V4.position[1], V4.position[2],
+                                                         V1.position[0], V1.position[1], V1.position[2]));
+
+            }
+        }
 
     private:
         PerlinNoise* noise;
