@@ -57,9 +57,11 @@ Normal computeNormal( float x1, float y1, float z1, float x2, float y2, float z2
 Model Plane( uint32_t width  = 1,
              uint32_t height = 1,
              uint32_t stepW  = 40,
-             uint32_t stepH  = 40 ) 
+             uint32_t stepH  = 40,
+             bool bCollision = false ) 
 {
     Model ret;
+    ret.step = stepW;
     float invW = 1.f / stepW;
     float invH = 1.f / stepH;
 
@@ -90,7 +92,6 @@ Model Plane( uint32_t width  = 1,
     ret.triangles = quads_buffer;  
 
     // Compute Normals
-
     for( size_t i{}; i < ret.triangles.size(); i += 4) {
         Vertex V1 = ret.vertices[ ret.triangles[i] ];
         Vertex V2 = ret.vertices[ ret.triangles[i+1] ];
@@ -100,6 +101,18 @@ Model Plane( uint32_t width  = 1,
                                           V2.position[0], V2.position[1], V2.position[2],
                                           V3.position[0], V3.position[1], V3.position[2] )};
         ret.normals.push_back(normal);
+    }
+
+    // Compute Collision
+    if( bCollision ) {
+        for(size_t j = 0; j < stepH; j += 8) {
+            for( size_t i = 0; i < stepW; i += 8) {
+                ret.collision.push_back( ret.vertices[j * (stepW+1) + i]);
+                ret.collision.push_back( ret.vertices[j * (stepW+1) + i + 8]);
+                ret.collision.push_back( ret.vertices[(j+8) * (stepW+1) + i + 8]);
+                ret.collision.push_back( ret.vertices[(j+8) * (stepW+1) + i]);
+            }
+        }
     }
     return ret;
 }

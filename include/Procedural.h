@@ -323,7 +323,17 @@ class ProceduralTerrain {
                 terrain.normals.push_back( computeNormal(V3.position[0], V3.position[1], V3.position[2],
                                                          V4.position[0], V4.position[1], V4.position[2],
                                                          V1.position[0], V1.position[1], V1.position[2]));
+            }
 
+            // Recompute collision box for 9 quads
+            terrain.collision.clear();
+            for(size_t j = 0; j < terrain.step; j += 8) {
+                for( size_t i = 0; i < terrain.step; i += 8) {
+                    terrain.collision.push_back( terrain.vertices[j * (terrain.step+1) + i]);
+                    terrain.collision.push_back( terrain.vertices[j * (terrain.step+1) + i + 8]);
+                    terrain.collision.push_back( terrain.vertices[(j+8) * (terrain.step+1) + i + 8]);
+                    terrain.collision.push_back( terrain.vertices[(j+8) * (terrain.step+1) + i]);
+                }
             }
         }
 

@@ -53,7 +53,9 @@ struct Model {
     std::vector<Vertex> vertices;
     std::vector<uint32_t> triangles;
     std::vector<Normal> normals;
+    std::vector<Vertex> collision; // CHANGE FROM NORMAL
     std::vector<Mesh> meshes;
+    int step = 0;
     uint64_t vertnum;
     uint64_t polynum;
 };

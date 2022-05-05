@@ -18,7 +18,8 @@ namespace MEGA {
 // For now this works
 #define SHOW_VERTICES
 //#define SHOW_NORMALS
-//#define SHOW_QUADS
+#define SHOW_QUADS
+#define SHOW_COLLISION
 
 // TODO: Implement Options for display
 enum {
@@ -123,27 +124,6 @@ void viewModel__display_func() {
     glEnd();
 #endif
 
-#ifdef SHOW_NORMALS
-    // DRAW NORMALS
-    glColor3f(1.0f, 0.5f, 0.2f);
-    glBegin(GL_LINES);
-    glLineWidth(0.001);
-        size_t k = 0;
-            for( size_t i{}; i < model->vertices.size(); i++ ) {
-            float x = model->normals[i].x;
-            float y = model->normals[i].y;
-            float z = model->normals[i].z;
-            float oX = model->vertices[i].position[0];
-            float oY = model->vertices[i].position[1];
-            float oZ = model->vertices[i].position[2];
-            //if(i%4==0) k++;
-
-            glVertex3f(oX+(x/15), oY+(y/15), oZ+(z/15));
-            glVertex3f(oX, oY, oZ);
-        }
-    glEnd();
-#endif
-
 #ifdef SHOW_QUADS
     // DRAW QUADS
     glBegin(GL_QUADS);                
@@ -192,6 +172,48 @@ void viewModel__display_func() {
         }
     glEnd();
 #endif
+
+#ifdef SHOW_NORMALS
+    // DRAW NORMALS
+    glColor3f(1.0f, 0.5f, 0.2f);
+    glBegin(GL_LINES);
+    glLineWidth(0.001);
+        size_t k = 0;
+            for( size_t i{}; i < model->vertices.size(); i++ ) {
+            float x = model->normals[i].x;
+            float y = model->normals[i].y;
+            float z = model->normals[i].z;
+            float oX = model->vertices[i].position[0];
+            float oY = model->vertices[i].position[1];
+            float oZ = model->vertices[i].position[2];
+            //if(i%4==0) k++;
+
+            glVertex3f(oX+(x/15), oY+(y/15), oZ+(z/15));
+            glVertex3f(oX, oY, oZ);
+        }
+    glEnd();
+#endif
+
+#ifdef SHOW_COLLISION
+    // DRAW VERTICES
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for( size_t i{}; i < model->collision.size(); i += 4 ) {
+       glVertex3f( model->collision[i].position[0], model->collision[i].position[1]+0.05, model->collision[i].position[2]);
+       glVertex3f( model->collision[i+1].position[0], model->collision[i+1].position[1]+0.05, model->collision[i+1].position[2]);
+
+       glVertex3f( model->collision[i+1].position[0], model->collision[i+1].position[1]+0.05, model->collision[i+1].position[2]);
+       glVertex3f( model->collision[i+2].position[0], model->collision[i+2].position[1]+0.05, model->collision[i+2].position[2]);
+
+       glVertex3f( model->collision[i+2].position[0], model->collision[i+2].position[1]+0.05, model->collision[i+2].position[2]);
+       glVertex3f( model->collision[i+3].position[0], model->collision[i+3].position[1]+0.05, model->collision[i+3].position[2]);
+
+       glVertex3f( model->collision[i+3].position[0], model->collision[i+3].position[1]+0.05, model->collision[i+3].position[2]);
+       glVertex3f( model->collision[i].position[0], model->collision[i].position[1]+0.05, model->collision[i].position[2]);
+    }
+    glEnd();
+#endif
+
     glutSwapBuffers();
 }
 
