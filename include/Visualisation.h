@@ -97,6 +97,8 @@ void viewModel__display_func() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
     glMatrixMode(GL_MODELVIEW);    
     glLoadIdentity();                
+
+
     glTranslatef(0, 0.0f, -2.0f);  
 
     if(moved) {
