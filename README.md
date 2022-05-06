@@ -1,32 +1,29 @@
 &nbsp;
 
-### About
-Barely runnable game engine made for MEGA.
-Optimised for ~ 10 million vertices, ~25MB.
-
-&nbsp;
-
 
 <!--![ezgif com-gif-maker](https://user-images.githubusercontent.com/58654842/166713462-9910a237-a875-4cfe-911d-b65ee3b81af5.gif)) -->
 ![image](https://user-images.githubusercontent.com/58654842/166895838-3ca490a3-928b-4afa-a450-fe7b3cc3c185.png)
 
+&nbsp;
 
-### Features
-* Perlin noise random terrain generation
+### About
+Toy Game Engine implementation for MEGA, M20253-2021/22    
+It has procedural terrain generation using perlin noise, first person player and .obj file loader. More to come.
+
 
 &nbsp;
 
 
 ### Dependencies
 * OpenGL
-* GLUT
+* glut
 
 &nbsp;
 
 ### TODO:
-* First person player movement
 * Object Collision
-* Gun with bullets that follow the cursor?
+* Basic physics simulation
+* Procedural terrain destruction with 3D perlin noise
 
 &nbsp;
 
@@ -34,7 +31,48 @@ Optimised for ~ 10 million vertices, ~25MB.
 
 ### Docs
 
+&nbsp;
 
+Procedural Terrain
+```c++
+#include <Procedural.h>
+ProceduralTerrain( seed, width, length, resolution, flatness, realistic (true) or smooth (false) );
+ProceduralTerrain( 6942069, 10, 10, 400, 30, true );
+```
+
+&nbsp;
+
+Model Viewer
+```c++
+#include <Visualisation.h>
+// generate or load a model
+viewModel(model, argc, argv );
+// For now, the macros that define what is shown are in the header file
+// you can comment out any the top macros : SHOW_VERTICES, SHOW_QUADS,
+// SHOW_NORMALS and SHOW_COLLISION
+// The viewer only supports quad models for now. Future triangle implementation is expected.
+```
+
+&nbsp;
+
+.OBJ Loader
+```c++
+#include <IO.h>
+Model a = loadModel("path to model");
+// For now this supports only vertices, faces and normals. It also skips comments.
+```
+
+&nbsp;
+
+Generate Primitive Geometrical Shapes
+```c++
+#include <GeometricPrimitives.h>
+
+Plane( width, height, step_width, step_height, collision );
+Plane( 1, 1, 40, 40, true );
+
+// This computes the normals for shaders.
+```
 
 &nbsp;
 
