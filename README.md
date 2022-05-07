@@ -36,7 +36,8 @@ It has procedural terrain generation using perlin noise, first person player and
 Procedural Terrain
 ```c++
 #include <Procedural.h>
-ProceduralTerrain( seed, width, length, resolution, flatness, realistic (true) or smooth (false) );
+ProceduralTerrain(seed, width, length, resolution, flatness, 
+                  realistic (true) or smooth (false));
 ProceduralTerrain( 6942069, 10, 10, 400, 30, true );
 ```
 
@@ -45,12 +46,13 @@ ProceduralTerrain( 6942069, 10, 10, 400, 30, true );
 Model Viewer
 ```c++
 #include <Visualisation.h>
-// generate or load a model
-viewModel(model, argc, argv );
+// generate or load a model of a specific topography type.
+viewModel(model, MEGA_QUADS, argc, argv );
+viewModel(model, MEGA_TRIANGLES, argc, argv );
+
 // For now, the macros that define what is shown are in the header file
 // you can comment out any the top macros : SHOW_VERTICES, SHOW_QUADS,
 // SHOW_NORMALS and SHOW_COLLISION
-// The viewer only supports quad models for now. Future triangle implementation is expected.
 ```
 
 &nbsp;
@@ -70,6 +72,9 @@ Generate Primitive Geometrical Shapes
 
 Plane( width, height, step_width, step_height, collision );
 Plane( 1, 1, 40, 40, true );
+
+Sphere( radius, sector_resolution, stack_resolution, collision);
+Sphere( 1.0f, 36, 18, false);
 
 // This computes the normals for shaders.
 ```
