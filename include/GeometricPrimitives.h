@@ -117,6 +117,80 @@ Model Plane( uint32_t width  = 1,
     return ret;
 }
 
+#define PI 3.14
+
+/* Build a Sphere Primitive of size and resolution */
+Model Sphere( uint32_t radius = 1.0f,
+              uint32_t sector_resolution = 36,
+              uint32_t stack_resolution = 18,
+              bool collision = false)
+{
+    Model ret;
+    float x, y, z, xy;  //position, xy is r*cos(u), to not recompute it every time
+    float nx, ny, nz;   // normal
+    
+    float sector_step = 2*PI / sector_resolution;
+    float stack_step = PI / stack_resolution;
+    float sector_angle, stack_angle;
+    float inv_len = 1.0f / radius;
+
+    // vertices and normals
+    for( size_t i{}; i <= stack_resolution; ++i ) {
+        stack_angle = PI / 2 - i * stack_step;
+        xy = radius * cos(stack_angle);
+        z = radius * sin(stack_angle);
+            
+        for( size_t j{}; j <= sector_resolution; ++j ) {
+            sector_angle = j * sector_step;
+
+            x = xy * cos( sector_angle );
+            y = xy * sin( sector_angle );
+            Vertex a;
+            a.position[0] = x;
+            a.position[1] = y;
+            a.position[2] = z;
+            ret.vertices.push_back(a);
+
+            Normal b;
+            b.x = x * inv_len;
+            b.y = y * inv_len;
+            b.z = z * inv_len;
+            ret.normals.push_back(b);
+        } 
+    }
+
+    // quads
+    int k1, k2;
+    for( size_t i{}; i < sector_resolution; ++i ) {
+        k1 = i * (sector_resolution + 1);
+        k2 = k1 + sector_resolution + 1;
+
+        for( size_t j{}; j < sector_resolution; ++j, ++k1, ++k2 ) {
+            if( i != 0 ) {
+                ret.triangles.push_back(k1);
+                ret.triangles.push_back(k2);
+                ret.triangles.push_back(k1+1);
+            }
+            if( i != (stack_resolution-1) ) {
+                ret.triangles.push_back(k1+1);
+                ret.triangles.push_back(k2);
+                ret.triangles.push_back(k2+1);
+            }
+        }
+    }
+    return ret;
+}
+
+
+Model Cube( uint32_t width,
+            uint32_t height,
+            uint32_t steps,
+            bool collision ) 
+{
+ 
+   
+}
+
 
 Model Cone( uint32_t resolution,
             uint32_t radius,

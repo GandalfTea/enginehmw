@@ -18,8 +18,8 @@ namespace MEGA {
 // For now this works
 #define SHOW_VERTICES
 //#define SHOW_NORMALS
-#define SHOW_QUADS
-#define SHOW_COLLISION
+#define SHOW_TOPOGRAPHY
+//#define SHOW_COLLISION
 
 // TODO: Implement Options for display
 enum {
@@ -28,6 +28,11 @@ enum {
     MEGA_NORMALS,
     MEGA_SPARSE_NORMALS
 } DisplayOptions;
+
+typedef enum {
+    MEGA_TRIANGLES,
+    MEGA_QUADS
+} ModelTopography;
 
 
 void InitGL() {
@@ -53,6 +58,7 @@ std::vector<float> direction{0, 0, 0};
 const float radius = 1.0f;
 const float rotation_speed = 0.0000003;
 auto start = std::chrono::high_resolution_clock::now();
+ModelTopography render_method;
 
 
 void mouseMotion(int x, int y) {
@@ -126,53 +132,65 @@ void viewModel__display_func() {
     glEnd();
 #endif
 
-#ifdef SHOW_QUADS
+#ifdef SHOW_TOPOGRAPHY
     // DRAW QUADS
-    glBegin(GL_QUADS);                
+    if( render_method == MEGA_QUADS ) {
+        glBegin(GL_QUADS);                
+            glColor3f(0.4f, 0.4f, 0.4f);
+            for( size_t i = 0; i < model->triangles.size(); i += 4) {
+                float x [3];
+                float y [3];
+                float z [3]; 
+                float w [3];
+                x[0] = model->vertices[ model->triangles[i]].position[0];
+                x[1] = model->vertices[ model->triangles[i]].position[1];
+                x[2] = model->vertices[ model->triangles[i]].position[2];
 
-        glColor3f(0.4f, 0.4f, 0.4f);
-        for( size_t i = 0; i < model->triangles.size(); i += 4) {
-            float x [3];
-            float y [3];
-            float z [3]; 
-            float w [3];
-            x[0] = model->vertices[ model->triangles[i]].position[0];
-            x[1] = model->vertices[ model->triangles[i]].position[1];
-            x[2] = model->vertices[ model->triangles[i]].position[2];
+                y[0] = model->vertices[ model->triangles[i + 1]].position[0];
+                y[1] = model->vertices[ model->triangles[i + 1]].position[1];
+                y[2] = model->vertices[ model->triangles[i + 1]].position[2];
 
-            y[0] = model->vertices[ model->triangles[i + 1]].position[0];
-            y[1] = model->vertices[ model->triangles[i + 1]].position[1];
-            y[2] = model->vertices[ model->triangles[i + 1]].position[2];
+                z[0] = model->vertices[ model->triangles[i + 2]].position[0];
+                z[1] = model->vertices[ model->triangles[i + 2]].position[1];
+                z[2] = model->vertices[ model->triangles[i + 2]].position[2];
 
-            z[0] = model->vertices[ model->triangles[i + 2]].position[0];
-            z[1] = model->vertices[ model->triangles[i + 2]].position[1];
-            z[2] = model->vertices[ model->triangles[i + 2]].position[2];
+                w[0] = model->vertices[ model->triangles[i + 3]].position[0];
+                w[1] = model->vertices[ model->triangles[i + 3]].position[1];
 
-            w[0] = model->vertices[ model->triangles[i + 3]].position[0];
-            w[1] = model->vertices[ model->triangles[i + 3]].position[1];
-            w[2] = model->vertices[ model->triangles[i + 3]].position[2];
-/*
-            std::cout << "X : ";
-            for( auto i : x ) { std::cout << i << " ";}
-            std::cout << std::endl;
-            std::cout << "Y : ";
-            for( auto i : y ) { std::cout << i << " ";}
-            std::cout << std::endl;
-            std::cout << "Z : ";
-            for( auto i : z ) { std::cout << i << " ";}
-            std::cout << std::endl;
-            std::cout << "W : ";
-            for( auto i : w ) { std::cout << i << " ";}
-            std::cout << std::endl;
-            std::cout << std::endl;
-            std::cout << model->triangles.size()/4 << std::endl;
-*/
-            glVertex3f( x[0], x[1], x[2]);
-            glVertex3f( y[0], y[1], y[2]);
-            glVertex3f( z[0], z[1], z[2]);
-            glVertex3f( w[0], w[1], w[2]);
-        }
-    glEnd();
+                w[2] = model->vertices[ model->triangles[i + 3]].position[2];
+                glVertex3f( x[0], x[1], x[2]);
+                glVertex3f( y[0], y[1], y[2]);
+                glVertex3f( z[0], z[1], z[2]);
+                glVertex3f( w[0], w[1], w[2]);
+            }
+        glEnd();
+
+    } else if ( render_method == MEGA_TRIANGLES ) {
+        glBegin(GL_TRIANGLES);                
+            glColor3f(0.4f, 0.4f, 0.4f);
+            for( size_t i = 0; i < model->triangles.size(); i += 3) {
+                float x [3];
+                float y [3];
+                float z [3]; 
+                x[0] = model->vertices[ model->triangles[i]].position[0];
+                x[1] = model->vertices[ model->triangles[i]].position[1];
+                x[2] = model->vertices[ model->triangles[i]].position[2];
+
+                y[0] = model->vertices[ model->triangles[i + 1]].position[0];
+                y[1] = model->vertices[ model->triangles[i + 1]].position[1];
+                y[2] = model->vertices[ model->triangles[i + 1]].position[2];
+
+                z[0] = model->vertices[ model->triangles[i + 2]].position[0];
+                z[1] = model->vertices[ model->triangles[i + 2]].position[1];
+                z[2] = model->vertices[ model->triangles[i + 2]].position[2];
+
+                glVertex3f( x[0], x[1], x[2]);
+                glVertex3f( y[0], y[1], y[2]);
+                glVertex3f( z[0], z[1], z[2]);
+            }
+        glEnd();
+        
+    }
 #endif
 
 #ifdef SHOW_NORMALS
@@ -228,7 +246,10 @@ void reshape(GLsizei width, GLsizei height) {
    gluPerspective(45.0f, aspect, 0.1f, 1000.0f);
 }
 
-void viewModel( Model mesh , int argc, char** argv ) {
+void viewModel( Model mesh, ModelTopography method, int argc, char** argv ) {
+
+   // QUADS or TRIANGLES
+   render_method = method;
 
    model = &mesh;
    glutInit(&argc, argv);           

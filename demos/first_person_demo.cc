@@ -10,10 +10,12 @@
 #define SHOW_VERTICES
 #define SHOW_QUADS
 //#define SHOW_COLLISION
+//#define SHOW_NORMALS
+
 
 using namespace MEGA;
 
-ProceduralTerrain a( 6942069, 3, 3, 600, 50, true);
+ProceduralTerrain a( 6942069, 2, 2, 1000, 250, true);
 Model* model = &a.terrain;
 float view_pitch = 0.0f, view_yaw = 0.0f;
 float player_x = 0.0, player_y = -1.0, player_z = 0.0;
@@ -45,7 +47,7 @@ void drawTerrain() {
     glBegin(GL_POINTS);
     glColor3f(0.0f, 1.0f, 1.0f);
     for( size_t i{}; i < model->vertices.size(); i++ ) {
-       glVertex3f( model->vertices[i].position[0], model->vertices[i].position[1]+0.01, model->vertices[i].position[2]);
+       glVertex3f( model->vertices[i].position[0], model->vertices[i].position[1]+0.001, model->vertices[i].position[2]);
     }
     glEnd();
 #endif
@@ -238,7 +240,7 @@ void reshape( int w, int h ) {
     glViewport(0, 0, w, h);
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    gluPerspective(60, aspect, 0.1f, 100);
+    gluPerspective(60, aspect, 0.001f, 100);
     //gluPerspective(45.0f, aspect, 0.1f, 1000.0f);
 }
 
