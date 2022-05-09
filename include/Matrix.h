@@ -319,7 +319,7 @@ class Matrix {
 
             Dot Product with a Column Vector
             TODO : MAKE REFERENCE
-            .....................................................................................
+            .....................................................................................*/
         Matrix dot( Vector<std::vector<Type>> lhs) {
             if(this->cols != lhs.size) throw 0;
             std::vector<Type> results {};
@@ -345,7 +345,6 @@ class Matrix {
             
         }
 
-        */
 
 		// Static
 // ................................................................................................
@@ -388,7 +387,7 @@ class Matrix {
 
             .....................................................................................
         */
-        Matrix& translation(size_t tx, size_t ty, size_t tz) {
+        Matrix& translation(float tx, float ty, float tz) {
             this->eye(3);
             this->set(0, 3, tx);
             this->set(1, 3, ty);

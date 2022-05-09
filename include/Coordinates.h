@@ -88,10 +88,10 @@ class EulerAngle {
     EulerAngle( double phi, double theta, double psi )
         : phi(phi), theta(theta), psi(psi) {};
     EulerAngle( Quaternion src );    // Quaternion -> Euler Angles
+    Matrix<F64C1> toRotMat();     // Euler Angles -> Rotation Matrix
 
 #ifndef USING_EIGEN_MAT
     EulerAngle( Matrix<F64C1> src );   // Rotation Matrix -> Euler Angles
-    Matrix<F64C1> toRotMat();     // Euler Angles -> Rotation Matrix
 #else
     // Not using Eigen yet.
     EulerAngle( Eigen::MatrixXd src );

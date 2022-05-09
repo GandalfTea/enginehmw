@@ -215,21 +215,20 @@ void viewModel__display_func() {
 #endif
 
 #ifdef SHOW_COLLISION
-    // DRAW VERTICES
     glBegin(GL_LINES);
     glColor3f(1.0f, 1.0f, 1.0f);
     for( size_t i{}; i < model->collision.size(); i += 4 ) {
-       glVertex3f( model->collision[i].position[0], model->collision[i].position[1]+0.05, model->collision[i].position[2]);
-       glVertex3f( model->collision[i+1].position[0], model->collision[i+1].position[1]+0.05, model->collision[i+1].position[2]);
+       glVertex3f( model->collision[i].position[0], model->collision[i].position[1]+0.01, model->collision[i].position[2]);
+       glVertex3f( model->collision[i+1].position[0], model->collision[i+1].position[1]+0.01, model->collision[i+1].position[2]);
 
-       glVertex3f( model->collision[i+1].position[0], model->collision[i+1].position[1]+0.05, model->collision[i+1].position[2]);
-       glVertex3f( model->collision[i+2].position[0], model->collision[i+2].position[1]+0.05, model->collision[i+2].position[2]);
+       glVertex3f( model->collision[i+1].position[0], model->collision[i+1].position[1]+0.01, model->collision[i+1].position[2]);
+       glVertex3f( model->collision[i+2].position[0], model->collision[i+2].position[1]+0.01, model->collision[i+2].position[2]);
 
-       glVertex3f( model->collision[i+2].position[0], model->collision[i+2].position[1]+0.05, model->collision[i+2].position[2]);
-       glVertex3f( model->collision[i+3].position[0], model->collision[i+3].position[1]+0.05, model->collision[i+3].position[2]);
+       glVertex3f( model->collision[i+2].position[0], model->collision[i+2].position[1]+0.01, model->collision[i+2].position[2]);
+       glVertex3f( model->collision[i+3].position[0], model->collision[i+3].position[1]+0.01, model->collision[i+3].position[2]);
 
-       glVertex3f( model->collision[i+3].position[0], model->collision[i+3].position[1]+0.05, model->collision[i+3].position[2]);
-       glVertex3f( model->collision[i].position[0], model->collision[i].position[1]+0.05, model->collision[i].position[2]);
+       glVertex3f( model->collision[i+3].position[0], model->collision[i+3].position[1]+0.01, model->collision[i+3].position[2]);
+       glVertex3f( model->collision[i].position[0], model->collision[i].position[1]+0.01, model->collision[i].position[2]);
     }
     glEnd();
 #endif
